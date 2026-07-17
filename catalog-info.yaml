@@ -170,3 +170,18 @@ spec:
   type: queue
   owner: user:default/p-bank
   system: doctor
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: doctor
+  title: TDH MorDee Doctor
+  description: >-
+    Telehealth system supporting doctor appointments, consultations,
+    onboarding, profiles, notifications, EHR, ranking, and timeslots.
+  tags:
+    - telehealth
+    - doctor
+spec:
+  owner: user:default/p-bank
