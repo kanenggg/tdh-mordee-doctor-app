@@ -1,0 +1,145 @@
+[http_server]
+host = "0.0.0.0"
+port = 8080
+
+# [service]
+# ehr_service_base_uri = "http://localhost:9002"
+# qolphin_base_uri = "https://tdh-mordee-qolphin-v1-272270411648.asia-southeast1.run.app"
+# biz_jade_service_base_uri = "http://localhost:9004"
+# privilege_service_base_uri = "http://localhost:8081/privilege"
+# biz_apm_base_uri = "http://localhost:9003"
+# Outbox is authoritative. Preserve origin/main Pub/Sub delivery until the
+# server-bg relay has PostgreSQL access and has been verified.
+# doctor_profile_immediate_delivery_enabled = true
+# consultation_internal_base_uri = "http://localhost:9100"
+# iam_gatekeeper_base_uri = "http://localhost:9101"
+# payment_internal_base_uri = "http://localhost:9102"
+# eagle ekyc service
+# eagle_base_uri = "http://localhost:9100"
+# Override with SERVICE__QOLPHIN_BASE_URI env var in production
+
+[firestore]
+gcp_project_id = "mordee-doctor-app-dev"
+database_id = "(default)"
+
+[firestore.collections]
+notifications = "notifications"
+doctors = "doctors"
+fcm_tokens = "fcm_tokens"
+
+[firebase]
+database_url = "https://mordee-doctor-app-dev-default-rtdb.asia-southeast1.firebasedatabase.app/"
+
+[fcm]
+project_id = "mordee-doctor-app-dev"
+api_v1 = "https://fcm.googleapis.com/v1/projects"
+
+[fcm.circuit_breaker]
+# SAFETY: Circuit breaker is disabled by default.
+# Enable ONLY via env var FCM__CIRCUIT_BREAKER__ENABLED=true after load testing.
+enabled = false
+failure_threshold = 5
+success_threshold = 2
+open_timeout_secs = 60
+
+[telemetry]
+service_name = "doctor-app"
+enabled = true
+# exporter_otlp_endpoint defaults to http://localhost:4317 if not set
+
+[pubsub]
+gcp_project_id = "tdg-dh-truehealth-core-nonprod"
+# Optional: set to "localhost:8085" for local pubsub emulator
+emulator_host = ""
+
+[pubsub.subscriptions]
+notification = "doctor-notification-v1-sub"
+consultation = "doctor-consultation-event-sub"
+doctor_calendar_update = "doctor-calendar-update-sub"
+doctor_notification_send = "doctor-notification-send-sub"
+
+[pubsub.subscriber]
+max_concurrency = 10
+enabled = true
+
+[pubsub.topics]
+appointments = "appointments"
+consultations = "consultations"
+system = "system"
+broadcast = "broadcast"
+doctor_notifications = "doctor-notification-topic-v1"
+doctor_profile_approved = "doctor-profile.approved"
+doctor_profile_status_updated = "doctor-profile.status-updated"
+
+[gcs]
+# Google Cloud Storage bucket for onboarding document uploads
+bucket_name = "mordee-doctor-app-uploads"
+# Base URL for accessing uploaded files (public or signed URL base)
+base_url = "https://storage.googleapis.com/mordee-doctor-app-uploads"
+# Service account used with IAM Credentials signBlob to generate short-lived signed URLs.
+# Override with GCS__SIGNING_SERVICE_ACCOUNT_EMAIL in production.
+signing_service_account_email = ""
+# Signed URL TTL in seconds. GCS V4 signed URLs allow up to 604800 seconds.
+signed_url_ttl_secs = 300
+
+# [postgres]
+# PostgreSQL connection URL
+# Override with POSTGRES__DATABASE_URL env var
+# host = "localhost"
+# port = 5432
+# user = "biz_doctor_admin"
+# password = "password"
+# dbname = "biz_doctor"
+
+[ranking]
+# Platform fee multiplier applied to doctor_fee.fee_amount to get consultationFee
+platform_fee_multiplier = 1.5
+
+[redis]
+url = "redis://localhost:6379"
+
+# [paseto]
+# 32-byte hex-encoded symmetric key for Paseto v4 local encryption of sensitive fields.
+# MUST be overridden with PASETO__LOCAL_KEY env var in production.
+# Generate with: openssl rand -hex 32
+# Should not be defeault
+# local_key = "0000000000000000000000000000000000000000000000000000000000000000"
+# summarization_key = "0000000000000000000000000000000000000000000000000000000000000000"
+
+[retry]
+# Maximum number of retry attempts for transient errors
+max_retries = 3
+
+# Base delay for exponential backoff (milliseconds)
+base_delay_ms = 1000
+
+# Maximum delay for exponential backoff (milliseconds)
+max_delay_ms = 10000
+
+# Maximum total elapsed time for retries (milliseconds)
+max_elapsed_time_ms = 30000
+
+# Random jitter to avoid thundering herd (milliseconds)
+jitter_ms = 500
+
+[timeslot]
+max_query_range_days = 30
+default_reservation_ttl = 300
+min_reservation_ttl = 60
+max_reservation_ttl = 3600
+expiry_check_interval = 60
+
+[timeslot.rate_limit]
+daily_limit = 10
+weekly_limit = 50
+enabled = true
+
+[insurance]
+# Override with INSURANCE__CONDITION_URL_TEMPLATE in production.
+# Must contain a single {privilegeId} placeholder.
+condition_url_template = "https://storage.googleapis.com/truehealth-public/instructions/insurance/{privilegeId}.html"
+
+[coupon]
+# Override with COUPON__CONDITION_URL_TEMPLATE in production.
+# Must contain a single {couponKey} placeholder.
+condition_url_template = "https://storage.googleapis.com/truehealth-public/insurances/AIA_Consent_th.html?{couponKey}"

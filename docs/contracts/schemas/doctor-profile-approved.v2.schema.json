@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tdh.internal/contracts/schemas/doctor-profile-approved.v2.schema.json",
+  "title": "DoctorProfileApproved V2",
+  "type": "object",
+  "required": [
+    "__type",
+    "eventId",
+    "doctorId",
+    "doctorAccountId",
+    "doctorProfileId",
+    "departmentId",
+    "department",
+    "counselingAreas",
+    "isActive",
+    "profession",
+    "specialty",
+    "workPlace",
+    "academicPosition",
+    "firstName",
+    "lastName",
+    "profileImageUrl",
+    "approvedAt",
+    "occurredAt",
+    "schemaVersion",
+    "profileVersion",
+    "consultationConfig"
+  ],
+  "properties": {
+    "__type": { "const": "DoctorProfileApproved" },
+    "eventId": { "type": "string", "format": "uuid" },
+    "doctorId": { "type": "string", "format": "uuid" },
+    "doctorAccountId": { "type": "integer" },
+    "doctorProfileId": { "type": "integer" },
+    "departmentId": { "type": "integer" },
+    "department": { "$ref": "#/$defs/localized" },
+    "counselingAreas": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/localized" }
+    },
+    "isActive": { "type": "boolean" },
+    "profession": { "$ref": "#/$defs/profession" },
+    "specialty": { "$ref": "#/$defs/specialty" },
+    "workPlace": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/workPlace" }
+    },
+    "academicPosition": { "$ref": "#/$defs/academicPosition" },
+    "firstName": { "$ref": "#/$defs/localized" },
+    "lastName": { "$ref": "#/$defs/localized" },
+    "profileImageUrl": { "type": "string" },
+    "approvedAt": { "type": "integer", "minimum": 0 },
+    "occurredAt": { "type": "integer", "minimum": 0 },
+    "schemaVersion": { "const": 2 },
+    "profileVersion": { "type": "integer", "minimum": 1 },
+    "consultationConfig": { "$ref": "#/$defs/consultationConfig" }
+  },
+  "additionalProperties": true,
+  "$defs": {
+    "localized": {
+      "type": "object",
+      "required": ["th", "en"],
+      "properties": {
+        "th": { "type": "string" },
+        "en": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "profession": {
+      "type": "object",
+      "required": ["id", "name", "abbr"],
+      "properties": {
+        "id": { "type": "integer" },
+        "name": { "$ref": "#/$defs/localized" },
+        "abbr": { "$ref": "#/$defs/localized" }
+      },
+      "additionalProperties": false
+    },
+    "academicPosition": {
+      "type": "object",
+      "required": ["id", "name", "abbr"],
+      "properties": {
+        "id": { "type": "integer" },
+        "name": { "$ref": "#/$defs/localized" },
+        "abbr": { "$ref": "#/$defs/localized" }
+      },
+      "additionalProperties": false
+    },
+    "workPlace": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "type": "integer" },
+        "name": { "$ref": "#/$defs/localized" }
+      },
+      "additionalProperties": false
+    },
+    "medicalSchool": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "type": "integer" },
+        "name": { "$ref": "#/$defs/localized" }
+      },
+      "additionalProperties": false
+    },
+    "specialty": {
+      "type": "object",
+      "required": ["id", "name", "medicalSchool"],
+      "properties": {
+        "id": { "type": "integer" },
+        "name": { "$ref": "#/$defs/localized" },
+        "subspecialty": { "$ref": "#/$defs/specialty" },
+        "medicalSchool": { "$ref": "#/$defs/medicalSchool" }
+      },
+      "additionalProperties": false
+    },
+    "consultationConfig": {
+      "type": "object",
+      "required": [
+        "channels",
+        "languages",
+        "durationMinutes",
+        "feeAmount",
+        "currency"
+      ],
+      "properties": {
+        "channels": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": ["voice", "chat", "video"] }
+        },
+        "languages": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": ["th", "en"] }
+        },
+        "durationMinutes": { "enum": [15, 25, 50] },
+        "feeAmount": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]{2}$"
+        },
+        "currency": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    }
+  }
+}

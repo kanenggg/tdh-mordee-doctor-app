@@ -1,0 +1,41 @@
+{
+  "doctorAccountId": 90001,
+  "doctorProfileId": 80001,
+  "citizenId": "9999999990001",
+  "firstName": {
+    "th": "ธนวัฒน์",
+    "en": "Thanawat"
+  },
+  "lastName": {
+    "th": "สุขเกษม",
+    "en": "Sukgasem"
+  },
+  "specialty": {
+    "id": 7,
+    "name": {
+      "th": "ผิวหนัง",
+      "en": "Dermatology"
+    },
+    "subspecialty": {
+      "id": 71,
+      "name": {
+        "th": "ภูมิแพ้ผิวหนัง",
+        "en": "Skin Allergy"
+      },
+      "medicalSchool": {
+        "id": 1,
+        "name": {
+          "th": "จุฬาฯ",
+          "en": "Chulalongkorn"
+        }
+      }
+    },
+    "medicalSchool": {
+      "id": 1,
+      "name": {
+        "th": "จุฬาฯ",
+        "en": "Chulalongkorn"
+      }
+    }
+  }
+}

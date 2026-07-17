@@ -1,0 +1,33 @@
+{
+  "routine": [
+    {
+      "dayOfWeek": 1,
+      "times": [
+        { "startTime": "09:00", "endTime": "12:00" },
+        { "startTime": "13:00", "endTime": "17:00" }
+      ]
+    },
+    {
+      "dayOfWeek": 3,
+      "times": [
+        { "startTime": "09:00", "endTime": "12:00" },
+        { "startTime": "13:00", "endTime": "17:00" }
+      ]
+    },
+    {
+      "dayOfWeek": 5,
+      "times": [
+        { "startTime": "10:00", "endTime": "15:00" }
+      ]
+    }
+  ],
+  "adHoc": [
+    {
+      "date": "2026-04-10",
+      "times": [
+        { "startTime": "08:00", "endTime": "11:00" }
+      ]
+    }
+  ],
+  "slotDuration": 30
+}

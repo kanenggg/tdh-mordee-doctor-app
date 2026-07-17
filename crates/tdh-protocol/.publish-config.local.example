@@ -1,0 +1,12 @@
+#!/bin/bash
+# Override registry settings for local development (bash format)
+# Copy this file to .publish-config.local and customize
+# source .publish-config.local
+
+# Example override for different GCP project:
+# export PUBLISH_GCP_PROJECT="my-custom-project"
+# export PUBLISH_REGISTRY_NAME="tdh-protocol-custom"
+
+# For Makefile overrides, create .publish-config.mk.local:
+# PUBLISH_GCP_PROJECT := my-custom-project
+# PUBLISH_REGISTRY_NAME := tdh-protocol-custom

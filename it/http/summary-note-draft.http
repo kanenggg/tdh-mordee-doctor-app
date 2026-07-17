@@ -1,0 +1,308 @@
+### Get summarization - no draft exists (PendingRecord)
+
+GET {{host}}/consultation/v1/summarization/APT-DOES-NOT-EXIST HTTP/1.1
+Accept: application/json
+Tdh-Sec-Iam-User-Identity: {{doctorIdentity}}
+
+### Save draft - summary note only (partial)
+
+POST {{host}}/consultation/v1/summarization/draft HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Tdh-Sec-Iam-User-Identity: {{doctorIdentity}}
+
+{
+  "appointmentId": "APT-DRAFT-001",
+  "summaryNote": {
+    "chiefComplaint": "Headache",
+    "presentIllness": "Patient presents with persistent headache for 3 days",
+    "diagnosis": "Tension-type headache",
+    "recommendations": "Rest, hydration, and over-the-counter pain relief",
+    "icd10": [
+      {
+        "code": "G44.2",
+        "description": "Tension-type headache"
+      }
+    ],
+    "illnessDuration": {
+      "value": 3,
+      "unit": "days"
+    },
+    "noteToStaff": "Follow up in 1 week if symptoms persist"
+  }
+}
+
+### Get summarization - after saving draft (SummarizationRecord, Draft)
+
+GET {{host}}/consultation/v1/summarization/APT-DRAFT-001 HTTP/1.1
+Accept: application/json
+Tdh-Sec-Iam-User-Identity: {{doctorIdentity}}
+
+### Save draft - prescription only (partial)
+
+POST {{host}}/consultation/v1/summarization/draft HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Tdh-Sec-Iam-User-Identity: {{doctorIdentity}}
+
+{
+  "appointmentId": "APT-DRAFT-002",
+  "prescription": {
+    "drugAllergyInfo": {
+      "__type": "NoDrugAllergies"
+    },
+    "prescriptionItems": {
+      "__type": "Prescription",
+      "items": [
+        {
+          "pricePlanId": 1,
+          "medicineId": 1,
+          "medicineName": "Paracetamol 500mg",
+          "dose": {
+            "id": 1,
+            "value": 500,
+            "unit": "mg"
+          },
+          "quantity": 10,
+          "route": {
+            "id": 1,
+            "description": "Oral"
+          },
+          "frequency": {
+            "id": 1,
+            "description": "3 times a day"
+          },
+          "indication": {
+            "id": 1,
+            "description": "Pain relief"
+          },
+          "foodTiming": {
+            "id": 1,
+            "description": "After meals"
+          },
+          "mealInstruction": {
+            "id": 1,
+            "description": "Take with food"
+          },
+          "duration": {
+            "id": 1,
+            "value": 3,
+            "unit": "days"
+          },
+          "cautions": null,
+          "remark": "Maximum 4g per day",
+          "noteToPatient": "Take with food to avoid stomach upset",
+          "unitPrice": 2.5
+        }
+      ]
+    }
+  }
+}
+
+### Get summarization - prescription-only draft
+
+GET {{host}}/consultation/v1/summarization/APT-DRAFT-002 HTTP/1.1
+Accept: application/json
+Tdh-Sec-Iam-User-Identity: {{doctorIdentity}}
+
+### Save draft - follow-up only (partial)
+
+POST {{host}}/consultation/v1/summarization/draft HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Tdh-Sec-Iam-User-Identity: {{doctorIdentity}}
+
+{
+  "appointmentId": "APT-DRAFT-003",
+  "followUpInfo": {
+    "__type": "ScheduleAppointment",
+    "followStartDatetime": 1717430400,
+    "followEndDatetime": 1717432200,
+    "visitTypes": ["FollowUp"],
+    "noteToPatient": "Please come back for follow-up in 2 weeks",
+    "noteToStaff": "Monitor blood pressure"
+  }
+}
+
+### Get summarization - follow-up-only draft
+
+GET {{host}}/consultation/v1/summarization/APT-DRAFT-003 HTTP/1.1
+Accept: application/json
+Tdh-Sec-Iam-User-Identity: {{doctorIdentity}}
+
+### Save draft - full (all sections)
+
+POST {{host}}/consultation/v1/summarization/draft HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Tdh-Sec-Iam-User-Identity: {{doctorIdentity}}
+
+{
+  "appointmentId": "APT-DRAFT-FULL",
+  "summaryNote": {
+    "chiefComplaint": "Severe sore throat with fever",
+    "presentIllness": "Patient presents with 2-day history of sore throat, fever 38.5C, difficulty swallowing",
+    "diagnosis": "Acute pharyngitis - bacterial",
+    "recommendations": "Complete antibiotic course, rest, hydration",
+    "icd10": [
+      {
+        "code": "J02.9",
+        "description": "Acute pharyngitis, unspecified"
+      },
+      {
+        "code": "R50.9",
+        "description": "Fever, unspecified"
+      }
+    ],
+    "illnessDuration": {
+      "value": 2,
+      "unit": "days"
+    },
+    "noteToStaff": "Patient has known penicillin allergy"
+  },
+  "prescription": {
+    "drugAllergyInfo": {
+      "__type": "HasDrugAllergies",
+      "drugAllergies": [
+        {
+          "id": 1,
+          "displayText": "Penicillin"
+        }
+      ]
+    },
+    "prescriptionItems": {
+      "__type": "Prescription",
+      "items": [
+        {
+          "pricePlanId": 2,
+          "medicineId": 2,
+          "medicineName": "Amoxicillin 500mg",
+          "dose": {
+            "id": 1,
+            "value": 500,
+            "unit": "mg"
+          },
+          "quantity": 21,
+          "route": {
+            "id": 1,
+            "description": "Oral"
+          },
+          "frequency": {
+            "id": 2,
+            "description": "3 times a day"
+          },
+          "indication": {
+            "id": 2,
+            "description": "Bacterial infection"
+          },
+          "foodTiming": {
+            "id": 1,
+            "description": "After meals"
+          },
+          "mealInstruction": {
+            "id": 1,
+            "description": "Take with food"
+          },
+          "duration": {
+            "id": 1,
+            "value": 7,
+            "unit": "days"
+          },
+          "cautions": "Allergic to penicillin - do not prescribe",
+          "remark": "Complete full course",
+          "noteToPatient": "Take all pills even if you feel better",
+          "unitPrice": 5.5
+        }
+      ]
+    }
+  },
+  "followUpInfo": {
+    "__type": "ScheduleAppointment",
+    "followStartDatetime": 1718035200,
+    "followEndDatetime": 1718037000,
+    "visitTypes": ["FollowUp"],
+    "noteToPatient": "Schedule follow-up consultation in 1 week",
+    "noteToStaff": "Review lab results before next visit"
+  }
+}
+
+### Get summarization - full draft
+
+GET {{host}}/consultation/v1/summarization/APT-DRAFT-FULL HTTP/1.1
+Accept: application/json
+Tdh-Sec-Iam-User-Identity: {{doctorIdentity}}
+
+### Save draft - update existing (overwrite APT-DRAFT-001 with full data)
+
+POST {{host}}/consultation/v1/summarization/draft HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Tdh-Sec-Iam-User-Identity: {{doctorIdentity}}
+
+{
+  "appointmentId": "APT-DRAFT-001",
+  "summaryNote": {
+    "chiefComplaint": "Updated: Migraine",
+    "presentIllness": "Updated: Recurring migraine episodes",
+    "diagnosis": "Migraine without aura",
+    "recommendations": "Avoid triggers, prescribed sumatriptan",
+    "icd10": [
+      {
+        "code": "G43.0",
+        "description": "Migraine without aura"
+      }
+    ],
+    "illnessDuration": {
+      "value": 7,
+      "unit": "days"
+    },
+    "noteToStaff": "Patient history of migraines"
+  },
+  "prescription": {
+    "drugAllergyInfo": {
+      "__type": "NoDrugAllergies"
+    },
+    "prescriptionItems": {
+      "__type": "NoPrescription"
+    }
+  },
+  "followUpInfo": {
+    "__type": "NoFollowUp",
+    "noteToStaff": "Return if symptoms worsen"
+  }
+}
+
+### Get summarization - verify updated draft
+
+GET {{host}}/consultation/v1/summarization/APT-DRAFT-001 HTTP/1.1
+Accept: application/json
+Tdh-Sec-Iam-User-Identity: {{doctorIdentity}}
+
+### Get summarization - unauthorized (different doctor)
+
+GET {{host}}/consultation/v1/summarization/APT-DRAFT-001 HTTP/1.1
+Accept: application/json
+Tdh-Sec-Iam-User-Identity: {{otherDoctorIdentity}}
+
+### Save draft - unauthorized (different doctor tries to save on existing)
+
+POST {{host}}/consultation/v1/summarization/draft HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Tdh-Sec-Iam-User-Identity: {{otherDoctorIdentity}}
+
+{
+  "appointmentId": "APT-DRAFT-001",
+  "summaryNote": {
+    "chiefComplaint": "Should not be saved",
+    "presentIllness": "Unauthorized",
+    "diagnosis": "N/A",
+    "recommendations": "N/A",
+    "icd10": [],
+    "illnessDuration": {
+      "value": 1,
+      "unit": "days"
+    },
+    "noteToStaff": null
+  }
+}

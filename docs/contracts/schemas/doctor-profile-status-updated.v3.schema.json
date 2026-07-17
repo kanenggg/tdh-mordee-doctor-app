@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tdh.internal/contracts/schemas/doctor-profile-status-updated.v3.schema.json",
+  "title": "DoctorProfileStatusUpdated V3",
+  "type": "object",
+  "required": [
+    "__type",
+    "eventId",
+    "doctorId",
+    "doctorAccountId",
+    "doctorProfileId",
+    "isActive",
+    "statusUpdatedAt",
+    "occurredAt",
+    "schemaVersion",
+    "profileVersion"
+  ],
+  "properties": {
+    "__type": { "const": "DoctorProfileStatusUpdated" },
+    "eventId": { "type": "string", "format": "uuid" },
+    "doctorId": { "type": "string", "format": "uuid" },
+    "doctorAccountId": { "type": "integer" },
+    "doctorProfileId": { "type": "integer" },
+    "isActive": { "type": "boolean" },
+    "statusUpdatedAt": { "type": "integer", "minimum": 0 },
+    "occurredAt": { "type": "integer", "minimum": 0 },
+    "schemaVersion": { "const": 3 },
+    "profileVersion": { "type": "integer", "minimum": 1 }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,28 @@
+#!/bin/bash
+# Unified Publishing Configuration for tdh-protocol
+
+# GCP Configuration
+export PUBLISH_GCP_PROJECT="tdg-dh-truehealth-core-nonprod"
+export PUBLISH_REGION="asia-southeast1"
+export PUBLISH_REGISTRY_NAME="tdh-protocol"
+
+# Repository names for gcloud commands
+export PUBLISH_MAVEN_REPO_NAME="${PUBLISH_REGISTRY_NAME}-maven"
+export PUBLISH_CARGO_REPO_NAME="${PUBLISH_REGISTRY_NAME}"
+export PUBLISH_PYTHON_REPO_NAME="${PUBLISH_REGISTRY_NAME}-python"
+export PUBLISH_NPM_REPO_NAME="${PUBLISH_REGISTRY_NAME}-npm"
+
+# Registry URLs
+export PUBLISH_MAVEN_REGISTRY="https://${PUBLISH_REGION}-maven.pkg.dev/${PUBLISH_GCP_PROJECT}/${PUBLISH_MAVEN_REPO_NAME}"
+export PUBLISH_CARGO_REGISTRY="https://${PUBLISH_REGION}-generic.pkg.dev/${PUBLISH_GCP_PROJECT}/${PUBLISH_CARGO_REPO_NAME}"
+export PUBLISH_PYTHON_REGISTRY="https://${PUBLISH_REGION}-python.pkg.dev/${PUBLISH_GCP_PROJECT}/${PUBLISH_PYTHON_REPO_NAME}"
+export PUBLISH_NPM_REGISTRY="https://${PUBLISH_REGION}-npm.pkg.dev/${PUBLISH_GCP_PROJECT}/${PUBLISH_NPM_REPO_NAME}"
+
+# Package Configuration
+export PUBLISH_PACKAGE_NAME="tdh-protocol"
+export PUBLISH_PACKAGE_VERSION="0.1.0"
+
+# Helper function
+get_publish_token() {
+    gcloud auth print-access-token
+}

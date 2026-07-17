@@ -1,0 +1,28 @@
+### Test API Call for Patient Past Visit
+### Endpoint: GET /ehr/v1/past-visit
+### Purpose: Retrieve patient visit history for patient account ID 232
+
+# Basic test call
+curl -X GET "http://localhost:8081/ehr/v1/past-visit" \
+  -H "patient-account-id: 232" \
+  -H "patient-profile-id: 232" \
+  -H "tdh-sec-iam-user-identity: {\"doctor_account_id\": 1, \"account_type\": 3, \"email\": \"test@example.com\"}" \
+  -v
+
+###
+
+# Alternative: With jq for pretty-printing JSON response
+curl -X GET "http://localhost:8081/ehr/v1/past-visit" \
+  -H "patient-account-id: 232" \
+  -H "patient-profile-id: 232" \
+  -H "tdh-sec-iam-user-identity: {\"doctor_account_id\": 1, \"account_type\": 3, \"email\": \"test@example.com\"}" \
+  -s | jq .
+
+###
+
+# Test with backoffice account (account_type: 4)
+curl -X GET "http://localhost:8081/ehr/v1/past-visit" \
+  -H "patient-account-id: 232" \
+  -H "patient-profile-id: 232" \
+  -H "tdh-sec-iam-user-identity: {\"doctor_account_id\": 1, \"account_type\": 4, \"email\": \"backoffice@example.com\"}" \
+  -v

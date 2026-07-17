@@ -1,0 +1,44 @@
+# Cloud Build configuration for Rust modules (mono-repo)
+# This is a shared configuration for all Rust services in the workspace.
+# Compatible with build-publish-cloudbuild.sh, which supplies:
+# _IMAGENAME=<region>/<project>/<repository>/<artifact>, _MODULE_NAME=<cargo-package>, _TAG=<release-tag>
+# Usage: gcloud builds submit --config=rust.cloudbuild.yaml --substitutions=_IMAGENAME=asia-southeast1-docker.pkg.dev/tdg-dh-truehealth-core-nonprod/cossack-docker/doctorapp-server,_MODULE_NAME=server,_TAG=latest .
+
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'setup-builder'
+    args:
+      - 'buildx'
+      - 'create'
+      - '--name'
+      - 'chef-builder'
+      - '--driver'
+      - 'docker-container'
+      - '--use'
+      - '--bootstrap'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build'
+    args:
+      - 'buildx'
+      - 'build'
+      - '--builder'
+      - 'chef-builder'
+      - '--build-arg'
+      - 'MODULE_NAME=${_MODULE_NAME}'
+      - '-f'
+      - 'Dockerfile'
+      - '--cache-from=type=registry,ref=${_IMAGENAME}:${_CACHE_TAG}'
+      - '--cache-to=type=registry,ref=${_IMAGENAME}:${_CACHE_TAG},mode=max'
+      - '-t'
+      - '${_IMAGENAME}:${_TAG}'
+      - '--push'
+      - '.'
+
+substitutions:
+  _IMAGENAME: 'asia-southeast1-docker.pkg.dev/tdg-dh-truehealth-core-nonprod/cossack-docker/doctorapp-server'
+  _MODULE_NAME: 'server'
+  _TAG: 'latest'
+  _CACHE_TAG: 'buildcache'
+options:
+  machineType: 'E2_HIGHCPU_8'

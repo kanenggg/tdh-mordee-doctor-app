@@ -1,0 +1,17 @@
+target/
+.git/
+.env
+.agent/
+.taskmaster/
+.cursor/
+.vscode/
+.idea/
+.metals/
+.bloop/
+.bsp/
+.gradle/
+.ivy2/
+.sbt/
+.screenrc/
+.tgz/
+.claude/

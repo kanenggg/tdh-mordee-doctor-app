@@ -1,0 +1,15 @@
+[workspace]
+members = [
+  "server",
+  "server-bg",
+  "crates/common",
+  "crates/tdh-protocol/rust",
+]
+resolver = "2"
+
+[workspace.dependencies]
+tdh-protocol = { path = "crates/tdh-protocol/rust", features = [
+  "openapi",
+  "sqlx",
+  "gcp-pubsub",
+] }

@@ -1,0 +1,84 @@
+{
+  "appointmentId": "APT-RX-001",
+  "summaryNote": {
+    "presentIllness": "Patient has fever for 2 days with body aches",
+    "chiefComplaint": "Fever and body aches",
+    "diagnosis": "Viral fever",
+    "recommendations": "Rest and hydration",
+    "icd10": [
+      {
+        "code": "A08.4",
+        "description": "Viral enteritis"
+      }
+    ],
+    "illnessDuration": {
+      "value": 2,
+      "unit": "days"
+    },
+    "noteToStaff": null
+  },
+  "prescription": {
+    "drugAllergyInfo": {
+      "__type": "HasDrugAllergies",
+      "drugAllergies": [
+        {
+          "id": 1,
+          "displayText": "Penicillin"
+        },
+        {
+          "id": 2,
+          "displayText": "Sulfa drugs"
+        }
+      ]
+    },
+    "prescriptionItems": {
+      "__type": "Prescription",
+      "items": [
+        {
+          "pricePlanId": 1,
+          "medicineId": 1,
+          "medicineName": "Paracetamol 500mg",
+          "dose": {
+            "id": 1,
+            "value": 500,
+            "unit": "mg"
+          },
+          "quantity": 10,
+          "route": {
+            "id": 1,
+            "description": "Oral"
+          },
+          "frequency": {
+            "id": 1,
+            "description": "3 times a day"
+          },
+          "indication": {
+            "id": 1,
+            "description": "Pain relief"
+          },
+          "foodTiming": {
+            "id": 1,
+            "description": "After meals"
+          },
+          "mealInstruction": {
+            "id": 1,
+            "description": "Take with food"
+          },
+          "duration": {
+            "id": 1,
+            "value": 3,
+            "unit": "days"
+          },
+          "cautions": null,
+          "remark": "Maximum 4g per day",
+          "noteToPatient": "Take with food to avoid stomach upset",
+          "unitPrice": 2.5
+        }
+      ]
+    }
+  },
+  "followUpInfo": {
+    "__type": "NoFollowUp",
+    "noteToStaff": null
+  }
+}

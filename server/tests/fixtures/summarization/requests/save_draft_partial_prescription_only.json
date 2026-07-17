@@ -1,0 +1,55 @@
+{
+  "appointmentId": "APT-003",
+  "summaryNote": null,
+  "prescription": {
+    "drugAllergyInfo": {
+      "__type": "NoDrugAllergies"
+    },
+    "prescriptionItems": {
+      "__type": "Prescription",
+      "items": [
+        {
+          "pricePlanId": 1001,
+          "medicineId": 1001,
+          "medicineName": "Paracetamol 500mg",
+          "dose": {
+            "id": 1,
+            "value": 1,
+            "unit": "tablet"
+          },
+          "quantity": 20,
+          "route": {
+            "id": 1,
+            "description": "Oral"
+          },
+          "frequency": {
+            "id": 1,
+            "description": "Three times daily"
+          },
+          "indication": {
+            "id": 1,
+            "description": "For pain relief"
+          },
+          "foodTiming": {
+            "id": 1,
+            "description": "After meals"
+          },
+          "mealInstruction": {
+            "id": 1,
+            "description": "Take with food"
+          },
+          "duration": {
+            "id": 1,
+            "value": 7,
+            "unit": "days"
+          },
+          "cautions": "Do not exceed recommended dose",
+          "remark": null,
+          "noteToPatient": "Take as needed for pain",
+          "unitPrice": 2.5
+        }
+      ]
+    }
+  },
+  "followUpInfo": null
+}

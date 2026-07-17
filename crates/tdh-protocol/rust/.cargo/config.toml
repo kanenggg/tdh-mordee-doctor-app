@@ -1,0 +1,2 @@
+[registries.kellnr]
+index = "sparse+https://kellnr.lp-sila.com/api/v1/crates/"

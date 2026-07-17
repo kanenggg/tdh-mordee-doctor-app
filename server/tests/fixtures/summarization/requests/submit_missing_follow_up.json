@@ -1,0 +1,23 @@
+{
+  "appointmentId": "APT-007",
+  "summaryNote": {
+    "presentIllness": "Patient presents with headache",
+    "chiefComplaint": "Headache",
+    "diagnosis": "Tension headache",
+    "recommendations": "Rest",
+    "icd10": [],
+    "illnessDuration": {
+      "value": 1,
+      "unit": "days"
+    },
+    "noteToStaff": null
+  },
+  "prescription": {
+    "drugAllergyInfo": {
+      "__type": "NoDrugAllergies"
+    },
+    "prescriptionItems": {
+      "__type": "NoPrescription"
+    }
+  }
+}

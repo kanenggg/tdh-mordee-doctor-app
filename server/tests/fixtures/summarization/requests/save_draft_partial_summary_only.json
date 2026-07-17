@@ -1,0 +1,17 @@
+{
+  "appointmentId": "APT-002",
+  "summaryNote": {
+    "presentIllness": "Patient presents with cough",
+    "chiefComplaint": "Cough for 5 days",
+    "diagnosis": null,
+    "recommendations": null,
+    "icd10": [],
+    "illnessDuration": {
+      "value": 5,
+      "unit": "days"
+    },
+    "noteToStaff": null
+  },
+  "prescription": null,
+  "followUpInfo": null
+}

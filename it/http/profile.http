@@ -1,0 +1,135 @@
+### Get schedule consultation config
+
+GET {{host}}/profile/v1/consultation-setting/schedule-config/{{profileBizUnitId}} HTTP/1.1
+Accept: application/json
+Tdh-Sec-Iam-User-Identity: {{doctorIdentity}}
+
+
+### Update schedule consultation config
+
+PUT {{host}}/profile/v1/consultation-setting/schedule-config/{{profileBizUnitId}} HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Tdh-Sec-Iam-User-Identity: {{doctorIdentity}}
+
+{
+  "specificDate": [
+    {
+      "date": "2026-05-20",
+      "periods": [
+        {
+          "startTime": 540,
+          "endTime": 720
+        },
+        {
+          "startTime": 780,
+          "endTime": 1020
+        }
+      ]
+    }
+  ],
+  "dayOfWeek": {
+    "1": [
+      {
+        "startTime": 540,
+        "endTime": 720
+      }
+    ],
+    "3": [
+      {
+        "startTime": 780,
+        "endTime": 1020
+      }
+    ]
+  }
+}
+
+
+### Update schedule consultation config - conflict time overlap
+
+PUT {{host}}/profile/v1/consultation-setting/schedule-config/{{profileBizUnitId}} HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Tdh-Sec-Iam-User-Identity: {{doctorIdentity}}
+
+{
+  "specificDate": [],
+  "dayOfWeek": {
+    "1": [
+      {
+        "startTime": 540,
+        "endTime": 720
+      },
+      {
+        "startTime": 660,
+        "endTime": 780
+      }
+    ],
+    "2": [
+      {
+        "startTime": 540,
+        "endTime": 720
+      },
+      {
+        "startTime": 720,
+        "endTime": 780
+      }
+    ],
+    "3": [
+      {
+        "startTime": 600,
+        "endTime": 900
+      },
+      {
+        "startTime": 840,
+        "endTime": 1020
+      }
+    ]
+  }
+}
+
+
+### Enable schedule availability
+
+POST {{host}}/profile/v1/availability/schedule HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Tdh-Sec-Iam-User-Identity: {{doctorIdentity}}
+
+{
+  "bizUnitId": {{profileBizUnitId}},
+  "available": true
+}
+
+
+### Enable instant availability
+
+POST {{host}}/profile/v1/availability/instant HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Tdh-Sec-Iam-User-Identity: {{doctorIdentity}}
+
+{
+  "bizUnitId": {{profileBizUnitId}},
+  "available": true
+}
+
+
+### Get availability
+
+GET {{host}}/profile/v1/availability?bizUnitId={{profileBizUnitId}} HTTP/1.1
+Accept: application/json
+Tdh-Sec-Iam-User-Identity: {{doctorIdentity}}
+
+
+### Get availability - non-doctor account (should return 403)
+
+GET {{host}}/profile/v1/availability?bizUnitId={{profileBizUnitId}} HTTP/1.1
+Accept: application/json
+Tdh-Sec-Iam-User-Identity: {{patientIdentity}}
+
+
+### Get availability - missing identity header (should return 401)
+
+GET {{host}}/profile/v1/availability?bizUnitId={{profileBizUnitId}} HTTP/1.1
+Accept: application/json

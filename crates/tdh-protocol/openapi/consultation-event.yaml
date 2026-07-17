@@ -1,0 +1,1230 @@
+openapi: 3.0.3
+info:
+  title: TDH Consultation Event API
+  description: OpenAPI specification for TDH Consultation Events
+  version: 0.1.0
+
+paths:
+  /api/v1/events/consultation:
+    post:
+      summary: Publish a consultation event
+      operationId: publishConsultationEvent
+      tags:
+        - Consultation Events
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsultationEvent'
+            examples:
+              TimeslotReserved:
+                summary: Timeslot reserved
+                value:
+                  __type: TimeslotReserved
+                  bookingId: BK-20260401-001
+                  patientIdentity:
+                    accountId: 12345
+                    userProfileId: 67890
+                    tenantId: 1
+                  doctorId: 42
+                  bizUnitId: 10
+                  reservedFrom: 1743494400
+                  reservationDurationSec: 900
+                  consultationChannel: video
+                  reservedAt: 1743494400
+              ConsultationBooked:
+                summary: Consultation booked
+                value:
+                  __type: ConsultationBooked
+                  bookingId: BK-20260401-001
+                  patientIdentity:
+                    accountId: 12345
+                    userProfileId: 67890
+                    tenantId: 1
+                  doctorId: 42
+                  bizUnitId: 10
+                  paymentModuleId: 5
+                  bookingType:
+                    __type: scheduled
+                  consultationStartTime: 1743494400
+                  consultationDurationInSecond: 900
+                  consultationChannel: video
+                  bookedAt: 1743494400
+                  symptoms: headache, fever
+                  consultationFee: 500.0
+              SessionCreated:
+                summary: Session created
+                value:
+                  __type: SessionCreated
+                  bookingId: BK-20260401-001
+                  patientIdentity:
+                    accountId: 12345
+                    userProfileId: 67890
+                    tenantId: 1
+                  doctorId: 42
+                  sessionProvider: vonage
+                  consultationStartTime: 1743494400
+                  consultationDurationInSecond: 900
+                  createdAt: 1743494400
+              SessionTerminated:
+                summary: Session terminated
+                value:
+                  __type: SessionTerminated
+                  bookingId: BK-20260401-001
+                  patientIdentity:
+                    accountId: 12345
+                    userProfileId: 67890
+                    tenantId: 1
+                  doctorId: 42
+                  terminationCode:
+                    __type: successfulSession
+                  terminatedBy: Doctor
+                  terminatedAt: 1743495300
+              ConsultationSummarized:
+                summary: Consultation summarized
+                value:
+                  __type: ConsultationSummarized
+                  bookingId: BK-20260401-001
+                  patientIdentity:
+                    accountId: 12345
+                    userProfileId: 67890
+                    tenantId: 1
+                  doctorId: 42
+                  doctorNote: Patient has recovered from fever. No follow-up needed.
+                  prescriptionInfo:
+                    prescriptionRefcode: RX-001
+                    medicineItems:
+                      - medicineId: 100
+                        pricePlanId: 200
+                        medicineAmount: 10
+                        medicineNameTh: "พาราเซตามอล"
+                        medicineNameEn: Paracetamol
+                        medicineInstructionEn: Take 1 tablet every 4-6 hours
+                        medicineInstructionTh: "รับประทาน 1 เม็ด ทุก 4-6 ชั่วโมง"
+                        medicineImageUrl: https://example.com/medicines/paracetamol.png
+                        medicineUnitPrice: 5.0
+                    expireAt: 1746086400
+                  summarizedAt: 1743495400
+              FollowUpRequired:
+                summary: Follow-up required
+                value:
+                  __type: FollowUpRequired
+                  previousBookingId: BK-20260401-001
+                  followUpId: FU-001
+                  patientIdentity:
+                    accountId: 12345
+                    userProfileId: 67890
+                    tenantId: 1
+                  doctorId: 42
+                  bizUnitId: 10
+                  consultationStartTime: 1744100000
+                  consultationDurationInSecond: 900
+                  consultationFee: 300.0
+                  consultationChannel: video
+                  additionalPatientNote: Still experiencing mild headache
+                  internalNote: Monitor for 3 more days
+                  createdAt: 1743495500
+      responses:
+        '200':
+          description: Event accepted successfully
+        '400':
+          description: Invalid request body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+
+    # ===== Common Types =====
+
+    ErrorResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+
+    PatientIdentity:
+      type: object
+      required:
+        - accountId
+        - userProfileId
+        - tenantId
+      properties:
+        accountId:
+          type: integer
+          format: int32
+        userProfileId:
+          type: integer
+          format: int32
+        tenantId:
+          type: integer
+          format: int32
+        oidcUserId:
+          type: string
+          nullable: true
+
+    ConsultationChannel:
+      type: string
+      enum:
+        - video
+        - chat
+        - voice
+
+    BookingType:
+      type: object
+      required:
+        - __type
+      properties:
+        __type:
+          type: string
+          enum:
+            - scheduled
+            - instant
+
+    SessionParticipant:
+      type: string
+      enum:
+        - Patient
+        - Doctor
+        - System
+
+    TerminationCode:
+      oneOf:
+        - type: object
+          title: SuccessfulSession
+          required:
+            - __type
+          properties:
+            __type:
+              type: string
+              enum:
+                - successfulSession
+        - type: object
+          title: PatientAbsent
+          required:
+            - __type
+          properties:
+            __type:
+              type: string
+              enum:
+                - patientAbsent
+        - type: object
+          title: DoctorAbsent
+          required:
+            - __type
+            - patientJoinedAt
+          properties:
+            __type:
+              type: string
+              enum:
+                - doctorAbsent
+            patientJoinedAt:
+              type: integer
+              format: int64
+        - type: object
+          title: BothPartiesAbsent
+          required:
+            - __type
+          properties:
+            __type:
+              type: string
+              enum:
+                - bothPartiesAbsent
+        - type: object
+          title: TechnicalError
+          required:
+            - __type
+            - errorMessage
+          properties:
+            __type:
+              type: string
+              enum:
+                - technicalError
+            errorMessage:
+              type: string
+
+    # ===== Supporting Types =====
+
+    Medicine:
+      type: object
+      required:
+        - medicineId
+        - pricePlanId
+        - medicineAmount
+        - medicineNameTh
+        - medicineNameEn
+        - medicineInstructionEn
+        - medicineInstructionTh
+        - medicineImageUrl
+        - medicineUnitPrice
+      properties:
+        medicineId:
+          type: integer
+          format: int32
+        pricePlanId:
+          type: integer
+          format: int32
+        medicineAmount:
+          type: integer
+          format: int32
+        medicineNameTh:
+          type: string
+        medicineNameEn:
+          type: string
+        medicineInstructionEn:
+          type: string
+        medicineInstructionTh:
+          type: string
+        medicineImageUrl:
+          type: string
+        medicineUnitPrice:
+          type: number
+          format: double
+
+    PrescriptionInfo:
+      type: object
+      required:
+        - prescriptionRefcode
+        - medicineItems
+        - expireAt
+      properties:
+        prescriptionRefcode:
+          type: string
+        medicineItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/Medicine'
+        expireAt:
+          type: integer
+          format: int64
+
+    # ===== Event Types =====
+
+    TimeslotReservedEvent:
+      type: object
+      required:
+        - bookingId
+        - patientIdentity
+        - doctorId
+        - bizUnitId
+        - reservedFrom
+        - reservationDurationSec
+        - consultationChannel
+        - reservedAt
+      properties:
+        bookingId:
+          type: string
+        patientIdentity:
+          $ref: '#/components/schemas/PatientIdentity'
+        doctorId:
+          type: integer
+          format: int32
+        bizUnitId:
+          type: integer
+          format: int32
+        reservedFrom:
+          type: integer
+          format: int64
+        reservationDurationSec:
+          type: integer
+          format: int32
+        consultationChannel:
+          $ref: '#/components/schemas/ConsultationChannel'
+        reservedAt:
+          type: integer
+          format: int64
+
+    ReservationCancelledEvent:
+      type: object
+      required:
+        - bookingId
+        - patientIdentity
+        - doctorId
+        - bizUnitId
+        - cancelledAt
+      properties:
+        bookingId:
+          type: string
+        patientIdentity:
+          $ref: '#/components/schemas/PatientIdentity'
+        doctorId:
+          type: integer
+          format: int32
+        bizUnitId:
+          type: integer
+          format: int32
+        cancelledAt:
+          type: integer
+          format: int64
+
+    ReservationExpiredEvent:
+      type: object
+      required:
+        - bookingId
+        - patientIdentity
+        - doctorId
+        - bizUnitId
+        - cancelledAt
+      properties:
+        bookingId:
+          type: string
+        patientIdentity:
+          $ref: '#/components/schemas/PatientIdentity'
+        doctorId:
+          type: integer
+          format: int32
+        bizUnitId:
+          type: integer
+          format: int32
+        cancelledAt:
+          type: integer
+          format: int64
+
+    ConsultationBookedEvent:
+      type: object
+      required:
+        - bookingId
+        - patientIdentity
+        - doctorId
+        - bizUnitId
+        - paymentModuleId
+        - bookingType
+        - consultationStartTime
+        - consultationDurationInSecond
+        - consultationChannel
+        - bookedAt
+        - symptoms
+        - consultationFee
+      properties:
+        bookingId:
+          type: string
+        patientIdentity:
+          $ref: '#/components/schemas/PatientIdentity'
+        doctorId:
+          type: integer
+          format: int32
+        bizUnitId:
+          type: integer
+          format: int32
+        paymentModuleId:
+          type: integer
+          format: int32
+        bookingType:
+          $ref: '#/components/schemas/BookingType'
+        consultationStartTime:
+          type: integer
+          format: int64
+        consultationDurationInSecond:
+          type: integer
+          format: int32
+        consultationChannel:
+          $ref: '#/components/schemas/ConsultationChannel'
+        bookedAt:
+          type: integer
+          format: int64
+        symptoms:
+          type: string
+        consultationFee:
+          type: number
+          format: double
+
+    ConsultationCancelledEvent:
+      type: object
+      required:
+        - bookingId
+        - patientIdentity
+        - doctorId
+        - bizUnitId
+        - paymentModuleId
+        - cancelCode
+        - cancelledAt
+      properties:
+        bookingId:
+          type: string
+        patientIdentity:
+          $ref: '#/components/schemas/PatientIdentity'
+        doctorId:
+          type: integer
+          format: int32
+        bizUnitId:
+          type: integer
+          format: int32
+        paymentModuleId:
+          type: integer
+          format: int32
+        cancelCode:
+          type: string
+        cancelledAt:
+          type: integer
+          format: int64
+
+    SessionCreatedEvent:
+      type: object
+      required:
+        - bookingId
+        - patientIdentity
+        - doctorId
+        - sessionProvider
+        - consultationStartTime
+        - consultationDurationInSecond
+        - createdAt
+      properties:
+        bookingId:
+          type: string
+        patientIdentity:
+          $ref: '#/components/schemas/PatientIdentity'
+        doctorId:
+          type: integer
+          format: int32
+        sessionProvider:
+          type: string
+        consultationStartTime:
+          type: integer
+          format: int64
+        consultationDurationInSecond:
+          type: integer
+          format: int32
+        createdAt:
+          type: integer
+          format: int64
+
+    PatientJoinedEvent:
+      type: object
+      required:
+        - bookingId
+        - patientIdentity
+        - doctorId
+        - joinedAt
+      properties:
+        bookingId:
+          type: string
+        patientIdentity:
+          $ref: '#/components/schemas/PatientIdentity'
+        doctorId:
+          type: integer
+          format: int32
+        joinedAt:
+          type: integer
+          format: int64
+
+    DoctorJoinedEvent:
+      type: object
+      required:
+        - bookingId
+        - patientIdentity
+        - doctorId
+        - joinedAt
+      properties:
+        bookingId:
+          type: string
+        patientIdentity:
+          $ref: '#/components/schemas/PatientIdentity'
+        doctorId:
+          type: integer
+          format: int32
+        joinedAt:
+          type: integer
+          format: int64
+
+    AllParticipantJoinedEvent:
+      type: object
+      required:
+        - bookingId
+        - patientIdentity
+        - doctorId
+        - patientJoinedAt
+        - doctorJoinedAt
+      properties:
+        bookingId:
+          type: string
+        patientIdentity:
+          $ref: '#/components/schemas/PatientIdentity'
+        doctorId:
+          type: integer
+          format: int32
+        patientJoinedAt:
+          type: integer
+          format: int64
+        doctorJoinedAt:
+          type: integer
+          format: int64
+
+    PatientDisconnectedEvent:
+      type: object
+      required:
+        - bookingId
+        - patientIdentity
+        - doctorId
+        - disconnectedAt
+      properties:
+        bookingId:
+          type: string
+        patientIdentity:
+          $ref: '#/components/schemas/PatientIdentity'
+        doctorId:
+          type: integer
+          format: int32
+        disconnectedAt:
+          type: integer
+          format: int64
+
+    DoctorDisconnectedEvent:
+      type: object
+      required:
+        - bookingId
+        - patientIdentity
+        - doctorId
+        - disconnectedAt
+      properties:
+        bookingId:
+          type: string
+        patientIdentity:
+          $ref: '#/components/schemas/PatientIdentity'
+        doctorId:
+          type: integer
+          format: int32
+        disconnectedAt:
+          type: integer
+          format: int64
+
+    SessionTerminatedEvent:
+      type: object
+      required:
+        - bookingId
+        - patientIdentity
+        - doctorId
+        - terminationCode
+        - terminatedBy
+        - terminatedAt
+      properties:
+        bookingId:
+          type: string
+        patientIdentity:
+          $ref: '#/components/schemas/PatientIdentity'
+        doctorId:
+          type: integer
+          format: int32
+        terminationCode:
+          $ref: '#/components/schemas/TerminationCode'
+        terminatedBy:
+          $ref: '#/components/schemas/SessionParticipant'
+        terminatedAt:
+          type: integer
+          format: int64
+
+    ConsultationSummarizedEvent:
+      type: object
+      required:
+        - bookingId
+        - patientIdentity
+        - doctorId
+        - doctorNote
+        - prescriptionInfo
+        - summarizedAt
+      properties:
+        bookingId:
+          type: string
+        patientIdentity:
+          $ref: '#/components/schemas/PatientIdentity'
+        doctorId:
+          type: integer
+          format: int32
+        doctorNote:
+          type: string
+        prescriptionInfo:
+          $ref: '#/components/schemas/PrescriptionInfo'
+        summarizedAt:
+          type: integer
+          format: int64
+
+    FollowUpRequiredEvent:
+      type: object
+      required:
+        - previousBookingId
+        - followUpId
+        - patientIdentity
+        - doctorId
+        - bizUnitId
+        - consultationStartTime
+        - consultationDurationInSecond
+        - consultationFee
+        - consultationChannel
+        - createdAt
+      properties:
+        previousBookingId:
+          type: string
+        followUpId:
+          type: string
+        patientIdentity:
+          $ref: '#/components/schemas/PatientIdentity'
+        doctorId:
+          type: integer
+          format: int32
+        bizUnitId:
+          type: integer
+          format: int32
+        consultationStartTime:
+          type: integer
+          format: int64
+        consultationDurationInSecond:
+          type: integer
+          format: int32
+        consultationFee:
+          type: number
+          format: double
+        consultationChannel:
+          $ref: '#/components/schemas/ConsultationChannel'
+        additionalPatientNote:
+          type: string
+          nullable: true
+        internalNote:
+          type: string
+          nullable: true
+        createdAt:
+          type: integer
+          format: int64
+
+    FollowUpRequestExpiredEvent:
+      type: object
+      required:
+        - previousBookingId
+        - followUpId
+        - doctorId
+        - patientIdentity
+        - createdAt
+      properties:
+        previousBookingId:
+          type: string
+        followUpId:
+          type: string
+        doctorId:
+          type: integer
+          format: int32
+        patientIdentity:
+          $ref: '#/components/schemas/PatientIdentity'
+        createdAt:
+          type: integer
+          format: int64
+
+    PatientAcceptedFollowUpEvent:
+      type: object
+      required:
+        - previousBookingId
+        - followUpId
+        - patientIdentity
+        - doctorId
+        - consultationStartTime
+        - consultationDurationInSecond
+        - consultationFee
+        - symptoms
+        - consultationChannel
+        - createdAt
+      properties:
+        previousBookingId:
+          type: string
+        followUpId:
+          type: string
+        patientIdentity:
+          $ref: '#/components/schemas/PatientIdentity'
+        doctorId:
+          type: integer
+          format: int32
+        consultationStartTime:
+          type: integer
+          format: int64
+        consultationDurationInSecond:
+          type: integer
+          format: int32
+        consultationFee:
+          type: number
+          format: double
+        symptoms:
+          type: string
+        consultationChannel:
+          $ref: '#/components/schemas/ConsultationChannel'
+        createdAt:
+          type: integer
+          format: int64
+
+    FollowUpCancelledEvent:
+      type: object
+      required:
+        - previousBookingId
+        - followUpId
+        - patientIdentity
+        - doctorId
+        - createdAt
+      properties:
+        previousBookingId:
+          type: string
+        followUpId:
+          type: string
+        patientIdentity:
+          $ref: '#/components/schemas/PatientIdentity'
+        doctorId:
+          type: integer
+          format: int32
+        createdAt:
+          type: integer
+          format: int64
+
+    # ===== Main Discriminated Union =====
+
+    ConsultationEvent:
+      oneOf:
+        - type: object
+          title: TimeslotReserved
+          required:
+            - __type
+          properties:
+            __type:
+              type: string
+              enum:
+                - TimeslotReserved
+            bookingId:
+              type: string
+            patientIdentity:
+              $ref: '#/components/schemas/PatientIdentity'
+            doctorId:
+              type: integer
+              format: int32
+            bizUnitId:
+              type: integer
+              format: int32
+            reservedFrom:
+              type: integer
+              format: int64
+            reservationDurationSec:
+              type: integer
+              format: int32
+            consultationChannel:
+              $ref: '#/components/schemas/ConsultationChannel'
+            reservedAt:
+              type: integer
+              format: int64
+
+        - type: object
+          title: ReservationCancelled
+          required:
+            - __type
+          properties:
+            __type:
+              type: string
+              enum:
+                - ReservationCancelled
+            bookingId:
+              type: string
+            patientIdentity:
+              $ref: '#/components/schemas/PatientIdentity'
+            doctorId:
+              type: integer
+              format: int32
+            bizUnitId:
+              type: integer
+              format: int32
+            cancelledAt:
+              type: integer
+              format: int64
+
+        - type: object
+          title: ReservationExpired
+          required:
+            - __type
+          properties:
+            __type:
+              type: string
+              enum:
+                - ReservationExpired
+            bookingId:
+              type: string
+            patientIdentity:
+              $ref: '#/components/schemas/PatientIdentity'
+            doctorId:
+              type: integer
+              format: int32
+            bizUnitId:
+              type: integer
+              format: int32
+            cancelledAt:
+              type: integer
+              format: int64
+
+        - type: object
+          title: ConsultationBooked
+          required:
+            - __type
+          properties:
+            __type:
+              type: string
+              enum:
+                - ConsultationBooked
+            bookingId:
+              type: string
+            patientIdentity:
+              $ref: '#/components/schemas/PatientIdentity'
+            doctorId:
+              type: integer
+              format: int32
+            bizUnitId:
+              type: integer
+              format: int32
+            paymentModuleId:
+              type: integer
+              format: int32
+            bookingType:
+              $ref: '#/components/schemas/BookingType'
+            consultationStartTime:
+              type: integer
+              format: int64
+            consultationDurationInSecond:
+              type: integer
+              format: int32
+            consultationChannel:
+              $ref: '#/components/schemas/ConsultationChannel'
+            bookedAt:
+              type: integer
+              format: int64
+            symptoms:
+              type: string
+            consultationFee:
+              type: number
+              format: double
+
+        - type: object
+          title: ConsultationCancelled
+          required:
+            - __type
+          properties:
+            __type:
+              type: string
+              enum:
+                - ConsultationCancelled
+            bookingId:
+              type: string
+            patientIdentity:
+              $ref: '#/components/schemas/PatientIdentity'
+            doctorId:
+              type: integer
+              format: int32
+            bizUnitId:
+              type: integer
+              format: int32
+            paymentModuleId:
+              type: integer
+              format: int32
+            cancelCode:
+              type: string
+            cancelledAt:
+              type: integer
+              format: int64
+
+        - type: object
+          title: SessionCreated
+          required:
+            - __type
+          properties:
+            __type:
+              type: string
+              enum:
+                - SessionCreated
+            bookingId:
+              type: string
+            patientIdentity:
+              $ref: '#/components/schemas/PatientIdentity'
+            doctorId:
+              type: integer
+              format: int32
+            sessionProvider:
+              type: string
+            consultationStartTime:
+              type: integer
+              format: int64
+            consultationDurationInSecond:
+              type: integer
+              format: int32
+            createdAt:
+              type: integer
+              format: int64
+
+        - type: object
+          title: PatientJoined
+          required:
+            - __type
+          properties:
+            __type:
+              type: string
+              enum:
+                - PatientJoined
+            bookingId:
+              type: string
+            patientIdentity:
+              $ref: '#/components/schemas/PatientIdentity'
+            doctorId:
+              type: integer
+              format: int32
+            joinedAt:
+              type: integer
+              format: int64
+
+        - type: object
+          title: DoctorJoined
+          required:
+            - __type
+          properties:
+            __type:
+              type: string
+              enum:
+                - DoctorJoined
+            bookingId:
+              type: string
+            patientIdentity:
+              $ref: '#/components/schemas/PatientIdentity'
+            doctorId:
+              type: integer
+              format: int32
+            joinedAt:
+              type: integer
+              format: int64
+
+        - type: object
+          title: AllParticipantJoined
+          required:
+            - __type
+          properties:
+            __type:
+              type: string
+              enum:
+                - AllParticipantJoined
+            bookingId:
+              type: string
+            patientIdentity:
+              $ref: '#/components/schemas/PatientIdentity'
+            doctorId:
+              type: integer
+              format: int32
+            patientJoinedAt:
+              type: integer
+              format: int64
+            doctorJoinedAt:
+              type: integer
+              format: int64
+
+        - type: object
+          title: PatientDisconnected
+          required:
+            - __type
+          properties:
+            __type:
+              type: string
+              enum:
+                - PatientDisconnected
+            bookingId:
+              type: string
+            patientIdentity:
+              $ref: '#/components/schemas/PatientIdentity'
+            doctorId:
+              type: integer
+              format: int32
+            disconnectedAt:
+              type: integer
+              format: int64
+
+        - type: object
+          title: DoctorDisconnected
+          required:
+            - __type
+          properties:
+            __type:
+              type: string
+              enum:
+                - DoctorDisconnected
+            bookingId:
+              type: string
+            patientIdentity:
+              $ref: '#/components/schemas/PatientIdentity'
+            doctorId:
+              type: integer
+              format: int32
+            disconnectedAt:
+              type: integer
+              format: int64
+
+        - type: object
+          title: SessionTerminated
+          required:
+            - __type
+          properties:
+            __type:
+              type: string
+              enum:
+                - SessionTerminated
+            bookingId:
+              type: string
+            patientIdentity:
+              $ref: '#/components/schemas/PatientIdentity'
+            doctorId:
+              type: integer
+              format: int32
+            terminationCode:
+              $ref: '#/components/schemas/TerminationCode'
+            terminatedBy:
+              $ref: '#/components/schemas/SessionParticipant'
+            terminatedAt:
+              type: integer
+              format: int64
+
+        - type: object
+          title: ConsultationSummarized
+          required:
+            - __type
+          properties:
+            __type:
+              type: string
+              enum:
+                - ConsultationSummarized
+            bookingId:
+              type: string
+            patientIdentity:
+              $ref: '#/components/schemas/PatientIdentity'
+            doctorId:
+              type: integer
+              format: int32
+            doctorNote:
+              type: string
+            prescriptionInfo:
+              $ref: '#/components/schemas/PrescriptionInfo'
+            summarizedAt:
+              type: integer
+              format: int64
+
+        - type: object
+          title: FollowUpRequired
+          required:
+            - __type
+          properties:
+            __type:
+              type: string
+              enum:
+                - FollowUpRequired
+            previousBookingId:
+              type: string
+            followUpId:
+              type: string
+            patientIdentity:
+              $ref: '#/components/schemas/PatientIdentity'
+            doctorId:
+              type: integer
+              format: int32
+            bizUnitId:
+              type: integer
+              format: int32
+            consultationStartTime:
+              type: integer
+              format: int64
+            consultationDurationInSecond:
+              type: integer
+              format: int32
+            consultationFee:
+              type: number
+              format: double
+            consultationChannel:
+              $ref: '#/components/schemas/ConsultationChannel'
+            additionalPatientNote:
+              type: string
+              nullable: true
+            internalNote:
+              type: string
+              nullable: true
+            createdAt:
+              type: integer
+              format: int64
+
+        - type: object
+          title: FollowUpRequestExpired
+          required:
+            - __type
+          properties:
+            __type:
+              type: string
+              enum:
+                - FollowUpRequestExpired
+            previousBookingId:
+              type: string
+            followUpId:
+              type: string
+            doctorId:
+              type: integer
+              format: int32
+            patientIdentity:
+              $ref: '#/components/schemas/PatientIdentity'
+            createdAt:
+              type: integer
+              format: int64
+
+        - type: object
+          title: PatientAcceptedFollowUp
+          required:
+            - __type
+          properties:
+            __type:
+              type: string
+              enum:
+                - PatientAcceptedFollowUp
+            previousBookingId:
+              type: string
+            followUpId:
+              type: string
+            patientIdentity:
+              $ref: '#/components/schemas/PatientIdentity'
+            doctorId:
+              type: integer
+              format: int32
+            consultationStartTime:
+              type: integer
+              format: int64
+            consultationDurationInSecond:
+              type: integer
+              format: int32
+            consultationFee:
+              type: number
+              format: double
+            symptoms:
+              type: string
+            consultationChannel:
+              $ref: '#/components/schemas/ConsultationChannel'
+            createdAt:
+              type: integer
+              format: int64
+
+        - type: object
+          title: FollowUpCancelled
+          required:
+            - __type
+          properties:
+            __type:
+              type: string
+              enum:
+                - FollowUpCancelled
+            previousBookingId:
+              type: string
+            followUpId:
+              type: string
+            patientIdentity:
+              $ref: '#/components/schemas/PatientIdentity'
+            doctorId:
+              type: integer
+              format: int32
+            createdAt:
+              type: integer
+              format: int64

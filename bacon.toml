@@ -1,0 +1,143 @@
+# bacon.toml - Hot-reload configuration for tdh-mordee-doctor-app
+# See https://dystroy.org/bacon/ for documentation
+
+default_job = "run-server-service"
+
+# [jobs.check]
+# command = ["cargo", "check", "-p", "server", "--color", "always"]
+# need_stdout = false
+# watch = ["server/src"]
+
+[jobs.check-all]
+command = ["cargo", "check", "--workspace", "--color", "always"]
+need_stdout = false
+
+[jobs.clippy]
+command = [
+  "cargo",
+  "clippy",
+  "-p",
+  "server",
+  "--color",
+  "always",
+  "--",
+  "-D",
+  "warnings",
+]
+need_stdout = false
+watch = ["server/src"]
+
+[jobs.clippy-all]
+command = [
+  "cargo",
+  "clippy",
+  "--workspace",
+  "--color",
+  "always",
+  "--",
+  "-D",
+  "warnings",
+]
+need_stdout = false
+
+[jobs.test]
+command = ["cargo", "test", "-p", "server", "--color", "always"]
+need_stdout = true
+watch = ["server/src", "server/tests"]
+
+[jobs.test-unit]
+command = ["cargo", "test", "-p", "server", "--lib", "--color", "always"]
+need_stdout = true
+watch = ["server/src"]
+
+[jobs.doc]
+command = ["cargo", "doc", "-p", "server", "--no-deps", "--color", "always"]
+need_stdout = false
+
+# Hot-reload server - rebuilds and runs on file changes
+[jobs.run-server]
+command = [
+  "cargo",
+  "run",
+  "--bin",
+  "server",
+  "--color",
+  "always",
+  "--",
+  "--config-dir",
+  "./server/config",
+]
+need_stdout = true
+allow_warnings = true
+background = true
+watch = ["server/src", "server/config"]
+kill_grace_period = 3
+on_success = "back"
+scroll_anchor = "auto"
+
+
+# Run server service - explicit workspace package job
+[jobs.run-server-service]
+command = [
+  "cargo",
+  "run",
+  "-p",
+  "server",
+  "--bin",
+  "server",
+  "--color",
+  "always",
+  "--",
+  "--config-dir",
+  "./server/config",
+]
+need_stdout = true
+allow_warnings = true
+scroll_anchor = "auto"
+# Keep the default job in foreground so startup config errors don't loop.
+watch = ["server/src", "server/config"]
+
+# Hot-reload server with release optimizations
+[jobs.run-release]
+command = ["cargo", "run", "-p", "server", "--release", "--color", "always"]
+need_stdout = true
+allow_warnings = true
+background = true
+watch = ["server/src", "server/config"]
+kill_grace_period = 3
+on_success = "back"
+
+# Build only (no run)
+[jobs.build]
+command = ["cargo", "build", "-p", "server", "--color", "always"]
+need_stdout = false
+watch = ["server/src"]
+
+[jobs.build-release]
+command = ["cargo", "build", "-p", "server", "--release", "--color", "always"]
+need_stdout = false
+watch = ["server/src"]
+
+# Format check
+[jobs.fmt]
+command = ["cargo", "fmt", "--", "--check", "--color", "always"]
+need_stdout = true
+on_success = "back"
+
+[keybindings]
+c = "job:check"
+C = "job:clippy"
+t = "job:test"
+r = "job:run-server"
+R = "job:run-release"
+b = "job:build"
+B = "job:build-release"
+f = "job:fmt"
+d = "job:doc"
+# Vim like key
+g = "scroll-to-top"
+shift-g = "scroll-to-bottom"
+k = "scroll-lines(-1)"
+j = "scroll-lines(1)"
+ctrl-u = "scroll-page(-1)"
+ctrl-d = "scroll-page(1)"

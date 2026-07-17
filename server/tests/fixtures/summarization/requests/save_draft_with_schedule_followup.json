@@ -1,0 +1,36 @@
+{
+  "appointmentId": "APT-FU-001",
+  "summaryNote": {
+    "presentIllness": "Regular follow-up for blood pressure monitoring",
+    "chiefComplaint": "Hypertension follow-up",
+    "diagnosis": "Essential hypertension",
+    "recommendations": "Continue current medication, monitor BP daily",
+    "icd10": [
+      {
+        "code": "I10",
+        "description": "Essential hypertension"
+      }
+    ],
+    "illnessDuration": {
+      "value": 30,
+      "unit": "days"
+    },
+    "noteToStaff": "Monitor blood pressure"
+  },
+  "prescription": {
+    "drugAllergyInfo": {
+      "__type": "NoDrugAllergies"
+    },
+    "prescriptionItems": {
+      "__type": "NoPrescription"
+    }
+  },
+  "followUpInfo": {
+    "__type": "ScheduleAppointment",
+    "followStartDatetime": 1717430400,
+    "followEndDatetime": 1717432200,
+    "visitTypes": ["FollowUp"],
+    "noteToPatient": "Please come back for follow-up in 2 weeks",
+    "noteToStaff": "Monitor blood pressure"
+  }
+}

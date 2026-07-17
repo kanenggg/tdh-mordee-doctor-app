@@ -1,0 +1,488 @@
+---
+openapi: 3.0.3
+info:
+  title: medicine-api API
+  version: 1.0.0-SNAPSHOT
+tags:
+- name: Medicine
+  description: Medicine search and lookup operations
+paths:
+  /lookup/{category}:
+    get:
+      tags:
+      - Look Up Resource
+      parameters:
+      - name: category
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: Accept-Language
+        in: header
+        schema:
+          type: string
+          nullable: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LookupResponse"
+  /medicine/info:
+    get:
+      tags:
+      - Medicine
+      summary: Get medicine info
+      description: Get detailed information for a specific medicine
+      parameters:
+      - name: pricePlanId
+        in: query
+        description: Price Plan ID
+        required: true
+        schema:
+          format: int32
+          type: integer
+      - name: productId
+        in: query
+        description: Product ID
+        required: true
+        schema:
+          format: int32
+          type: integer
+      - name: Accept-Language
+        in: header
+        description: Language code (e.g. th-TH)
+        schema:
+          type: string
+          nullable: true
+      responses:
+        "200":
+          description: Medicine details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MedicineInfoResponse"
+  /medicine/search/{channelId}:
+    get:
+      tags:
+      - Medicine
+      summary: Search medicines
+      description: Search for medicines by payer code and keywords
+      parameters:
+      - name: channelId
+        in: path
+        description: Channel ID
+        required: true
+        schema:
+          format: int32
+          type: integer
+      - name: keyword
+        in: query
+        description: Search keyword
+        required: true
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: Limit number of results
+        schema:
+          format: int32
+          type: integer
+          nullable: true
+      - name: pageToken
+        in: query
+        description: Page token for pagination
+        schema:
+          format: int32
+          type: integer
+          nullable: true
+      - name: payerCode
+        in: query
+        description: Payer Code
+        schema:
+          type: string
+          nullable: true
+      - name: Accept-Language
+        in: header
+        description: Language code (e.g. th-TH)
+        schema:
+          type: string
+          nullable: true
+      responses:
+        "200":
+          description: List of medicines
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MedicineDetail"
+components:
+  schemas:
+    JsonNode:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        valueNode:
+          type: boolean
+        containerNode:
+          type: boolean
+        missingNode:
+          type: boolean
+        array:
+          type: boolean
+        object:
+          type: boolean
+        nodeType:
+          $ref: "#/components/schemas/JsonNodeType"
+        pojo:
+          type: boolean
+        number:
+          type: boolean
+        integralNumber:
+          type: boolean
+        floatingPointNumber:
+          type: boolean
+        short:
+          type: boolean
+        int:
+          type: boolean
+        long:
+          type: boolean
+        float:
+          type: boolean
+        double:
+          type: boolean
+        bigDecimal:
+          type: boolean
+        bigInteger:
+          type: boolean
+        textual:
+          type: boolean
+        boolean:
+          type: boolean
+        "null":
+          type: boolean
+        binary:
+          type: boolean
+    JsonNodeType:
+      enum:
+      - ARRAY
+      - BINARY
+      - BOOLEAN
+      - MISSING
+      - "NULL"
+      - NUMBER
+      - OBJECT
+      - POJO
+      - STRING
+      type: string
+    LookupData:
+      type: object
+      properties:
+        id:
+          format: int32
+          type: integer
+        name: {}
+        weight:
+          format: int32
+          type: integer
+        categoryId:
+          format: int32
+          type: integer
+    LookupResponse:
+      required:
+      - __type
+      type: object
+      properties:
+        __type:
+          type: string
+        categoryId:
+          format: int32
+          type: integer
+          nullable: true
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/LookupData"
+          nullable: true
+    MedicineDetail:
+      required:
+      - productName
+      - productDisplayName
+      - medicineInfo
+      type: object
+      properties:
+        pricePlanId:
+          format: int32
+          type: integer
+        productId:
+          format: int32
+          type: integer
+        productParentId:
+          format: int32
+          type: integer
+          nullable: true
+        legacyProductId:
+          format: int32
+          type: integer
+          nullable: true
+        channelId:
+          format: int32
+          type: integer
+        productName:
+          type: string
+        productDisplayName:
+          type: string
+        unitPrice:
+          format: double
+          type: number
+          nullable: true
+        commitPrice:
+          format: double
+          type: number
+          nullable: true
+        productDisplayDiscount:
+          type: array
+          allOf:
+          - $ref: "#/components/schemas/JsonNode"
+          nullable: true
+        productImages:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProductImage"
+          nullable: true
+        uom:
+          type: string
+          nullable: true
+        remark:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        ingredient:
+          type: string
+          nullable: true
+        instruction:
+          type: string
+          nullable: true
+        caution:
+          type: string
+          nullable: true
+        isDigitalProduct:
+          type: boolean
+          nullable: true
+        requiredPharmacistApproval:
+          type: boolean
+          nullable: true
+        requiredDoctorApproval:
+          type: boolean
+          nullable: true
+        isMedicalRelated:
+          type: boolean
+          nullable: true
+        score:
+          format: double
+          type: number
+          nullable: true
+        medicineGenericIds:
+          type: array
+          items:
+            format: int32
+            type: integer
+          nullable: true
+        payerConds:
+          type: array
+          items:
+            type: string
+          nullable: true
+        medicineInfo:
+          $ref: "#/components/schemas/MedicineInfo"
+        digitalProduct:
+          type: boolean
+          nullable: true
+        medicalRelated:
+          type: boolean
+          nullable: true
+    MedicineInfo:
+      type: object
+      properties:
+        weight:
+          format: int32
+          type: integer
+        defaultDose:
+          format: int32
+          type: integer
+        defaultRoute:
+          format: int32
+          type: integer
+        defaultFrequency:
+          format: int32
+          type: integer
+        defaultMeal:
+          format: int32
+          type: integer
+        defaultDuration:
+          format: int32
+          type: integer
+        defaultIndication:
+          format: int32
+          type: integer
+        availableDoses:
+          type: array
+          items:
+            format: int32
+            type: integer
+          nullable: true
+        availableRoutes:
+          type: array
+          items:
+            format: int32
+            type: integer
+          nullable: true
+        availableFrequencies:
+          type: array
+          items:
+            format: int32
+            type: integer
+          nullable: true
+        availableMeals:
+          type: array
+          items:
+            format: int32
+            type: integer
+          nullable: true
+        availableDurations:
+          type: array
+          items:
+            format: int32
+            type: integer
+          nullable: true
+        availableIndications:
+          type: array
+          items:
+            format: int32
+            type: integer
+          nullable: true
+    MedicineInfoResponse:
+      required:
+      - __type
+      type: object
+      properties:
+        __type:
+          type: string
+        pricePlanId:
+          format: int32
+          type: integer
+          nullable: true
+        productId:
+          format: int32
+          type: integer
+          nullable: true
+        productParentId:
+          format: int32
+          type: integer
+          nullable: true
+        legacyProductId:
+          format: int32
+          type: integer
+          nullable: true
+        channelId:
+          format: int32
+          type: integer
+          nullable: true
+        productName:
+          type: string
+          nullable: true
+        productDisplayName:
+          type: string
+          nullable: true
+        unitPrice:
+          format: double
+          type: number
+          nullable: true
+        commitPrice:
+          format: double
+          type: number
+          nullable: true
+        productDisplayDiscount:
+          type: object
+          allOf:
+          - $ref: "#/components/schemas/JsonNode"
+          nullable: true
+        productImages:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProductImage"
+          nullable: true
+        uom:
+          type: string
+          nullable: true
+        remark:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        ingredient:
+          type: string
+          nullable: true
+        instruction:
+          type: string
+          nullable: true
+        caution:
+          type: string
+          nullable: true
+        isDigitalProduct:
+          type: boolean
+          nullable: true
+        requiredPharmacistApproval:
+          type: boolean
+          nullable: true
+        requiredDoctorApproval:
+          type: boolean
+          nullable: true
+        isMedicalRelated:
+          type: boolean
+          nullable: true
+        score:
+          format: double
+          type: number
+          nullable: true
+        medicineGenericIds:
+          type: array
+          items:
+            format: int32
+            type: integer
+          nullable: true
+        payerConds:
+          type: array
+          items:
+            type: string
+          nullable: true
+        medicineInfo:
+          type: object
+          allOf:
+          - $ref: "#/components/schemas/MedicineInfo"
+          nullable: true
+        digitalProduct:
+          type: boolean
+          nullable: true
+        medicalRelated:
+          type: boolean
+          nullable: true
+    ProductImage:
+      required:
+      - imageUrl
+      type: object
+      properties:
+        imageUrl:
+          type: string
+        isDefault:
+          type: boolean
+        imageNumber:
+          format: int32
+          type: integer
+        default:
+          type: boolean

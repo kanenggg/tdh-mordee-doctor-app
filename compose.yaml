@@ -1,0 +1,110 @@
+services:
+  doctor-api:
+    image: registry.lp-sila.com/doctor-app:latest
+    restart: always
+    network_mode: bridge
+    environment:
+      - NODE_ENV=production
+      - FIREBASE__DATABASE_SECRET=
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.doctor-api.rule=Host(`demo.lp-sila.com`)
+      - traefik.http.routers.doctor-api.entrypoints=websecure
+      - traefik.http.routers.doctor-api.tls=true
+      - traefik.http.routers.doctor-api.tls.certresolver=cloudflare
+      - traefik.http.services.doctor-api.loadbalancer.server.port=8081
+  directus:
+    container_name: mordee-doctorapp-directus
+    image: directus/directus:11
+    ports:
+      - "${DIRECTUS__PORT:-8055}:8055"
+    environment:
+      SECRET: "REPLACE_WITH_YOUR_SECRET"
+
+      DB_CLIENT: "pg"
+      DB_HOST: "postgres"
+      DB_PORT: "5432"
+      DB_DATABASE: "biz_doctor"
+      DB_USER: "biz_doctor_admin"
+      DB_PASSWORD: "password"
+      DB_SEARCH_PATH: "directus, public"
+
+      CACHE_ENABLED: "false"
+      # CACHE_AUTO_PURGE: "true"
+      # CACHE_STORE: "redis"
+      # REDIS: "redis://cache:6379"
+
+      ADMIN_EMAIL: "admin@example.com"
+      ADMIN_PASSWORD: "directus!"
+      PUBLIC_URL: "http://directus.tdh-mordee-doctor-app.orb.local:8055"
+  migrate:
+    container_name: mordee-doctorapp-migrate
+    image: asia-southeast1-docker.pkg.dev/tdg-dh-truehealth-core-nonprod/infra-starfish-docker/pgdb-script-runner:537038d
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+    volumes:
+      - ./db/postgres:/db/postgres
+      - ./migrate.sh:/migrate.sh:ro
+    environment:
+      # PGPASSWORD: "${POSTGRES__PASSWORD:-password}"
+      USER: "${POSTGRES__USER:-biz_doctor_admin}"
+      POSTGRES_USER_PASS: "${POSTGRES__PASSWORD:-password}"
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_NAME: "${POSTGRES__DB:-biz_doctor}"
+      DB_ADMIN_USER: biz_doctor_admin
+      DB_USER_ADMIN_NAME: biz_doctor_admin
+      DB_USER_ADMIN_PASS: password
+      DB_USER_SERVICE_RW_NAME: biz_doctor_rw
+      DB_USER_SERVICE_RW_PASS: password
+      DB_USER_SERVICE_RO_NAME: biz_doctor_ro
+      DB_USER_SERVICE_RO_PASS: password
+    command: ["sh", "/migrate.sh", "container-migrate"]
+  postgres:
+    container_name: mordee-doctorapp-postgres
+    image: postgres:15-alpine
+    ports:
+      - "${POSTGRES__PORT:-5432}:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+    # volumes:
+    #   - ./db/postgres/migrations/:/docker-entrypoint-initdb.d/
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U biz_doctor_admin -d biz_doctor"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  # pubsub-emulator:
+  #   container_name: mordee-doctorapp-pubsub-emulator
+  #   image: gcr.io/google.com/cloudsdktool/cloud-sdk:latest
+  #   ports:
+  #     - "8085:8085"
+  #   command: gcloud beta emulators pubsub start --host-port=0.0.0.0:8085 --project=test-project
+  #
+  redis:
+    image: redis:6-alpine
+    container_name: mordee-doctorapp-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  # insight:
+  #   container_name: mordee-doctorapp-redis-insight
+  #   image: redis/redisinsight
+      #   c
+  #   ports:
+  #     - "5540:5540"
+  #   depends_on:
+  #     redis:
+  #       condition: service_healthy
+
+volumes:
+  redis_data:
+  postgres_data:

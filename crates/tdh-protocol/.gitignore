@@ -1,0 +1,50 @@
+# Scala
+scala/target/
+scala/project/target/
+scala/project/project/
+.bsp/
+.metals/
+.bloop/
+
+# Rust
+rust/target/
+**/*.rs.bk
+Cargo.lock
+
+# Python
+python/__pycache__/
+python/*.pyc
+python/.pytest_cache/
+python/build/
+python/dist/
+python/*.egg-info/
+
+# TypeScript
+typescript/node_modules/
+typescript/dist/
+*.tsbuildinfo
+
+# Generated code (optional - commit if desired for stability)
+# Uncomment to track generated code:
+# scala/src/generated/
+# rust/src/*.rs
+# python/tdh_protocol/
+# typescript/src/
+
+# Buf
+.buf/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Publishing config (local overrides)
+.publish-config.local
+.publish-config.mk.local

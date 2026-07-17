@@ -1,0 +1,7 @@
+version: v1
+breaking:
+  except:
+    - ENUM_NO_DELETE
+    - FIELD_NO_DELETE
+lint:
+  except: []

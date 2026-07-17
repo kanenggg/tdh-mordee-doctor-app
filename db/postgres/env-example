@@ -1,0 +1,46 @@
+# Copy this file to db/postgres/.env and replace placeholder passwords before
+# running ./migrate.sh or just db.
+
+DB_HOST=postgresql.local
+DB_PORT=5432
+DB_NAME=biz_doctor
+
+# Required only for check-bootstrap and initial.
+DB_BOOTSTRAP_USER=postgres
+DB_BOOTSTRAP_PASS=replace-with-bootstrap-password
+
+# Used by local db/scripts. migrate.sh derives these from DB_BOOTSTRAP_USER
+# and DB_BOOTSTRAP_PASS when omitted.
+# POSTGRES_USER="${DB_BOOTSTRAP_USER}"
+# POSTGRES_USER_PASS="${DB_BOOTSTRAP_PASS}"
+# POSTGRES_DB=postgres
+
+# Required for check-admin, atlas-diff, migrate, verify, and all.
+DB_USER_ADMIN_NAME=biz_doctor_admin
+DB_USER_ADMIN_PASS=replace-with-admin-password
+
+# Required for initial and migrate.
+DB_USER_SERVICE_RW_NAME=biz_doctor_rw
+DB_USER_SERVICE_RW_PASS=replace-with-rw-password
+DB_USER_SERVICE_RO_NAME=biz_doctor_ro
+DB_USER_SERVICE_RO_PASS=replace-with-ro-password
+
+# Defaults mirror the role names above; override only if a script requires
+# different aliases.
+DB_ADMIN_USER="${DB_USER_ADMIN_NAME}"
+DB_SERVICE_RW_USER="${DB_USER_SERVICE_RW_NAME}"
+DB_SERVICE_RO_USER="${DB_USER_SERVICE_RO_NAME}"
+
+# Required by atlas-diff unless passed as arg 2.
+MIGRATION_NAME=add_example_migration
+
+ATLAS_ENV=local
+ATLAS_DEV_URL="docker://postgres/15/dev?search_path=public"
+
+# Optional. Set this instead of letting migrate.sh build a URL when the password
+# contains URL-special characters and needs encoding.
+# DATABASE_URL="postgres://biz_doctor_admin:replace-with-url-encoded-password@postgresql.local:5432/biz_doctor?sslmode=disable"
+
+# Optional, only when running db/postgres/initial/005_create_biz_apm_anon.sh.
+# DB_ANON_USER=biz_mordee_doctor_anon
+# DB_ANON_USER_PASS=replace-with-anon-password

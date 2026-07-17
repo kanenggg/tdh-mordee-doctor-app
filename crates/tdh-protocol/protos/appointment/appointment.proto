@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package tdh.protocol.appointment;
+
+// AppointmentStatusDoc - discriminated union for appointment states
+message AppointmentStatusDoc {
+  oneof status {
+    Pending pending = 1;
+    Confirmed confirmed = 2;
+    Cancelled cancelled = 3;
+    Completed completed = 4;
+    NoShow no_show = 5;
+    Rescheduled rescheduled = 6;
+  }
+}
+
+message Pending {
+  int64 created_at = 1;
+}
+
+message Confirmed {
+  int64 confirmed_at = 1;
+  int32 payment_module_id = 2;
+}
+
+message Cancelled {
+  string cancel_code = 1;
+  int64 cancelled_at = 2;
+  string cancelled_by = 3;  // "patient", "doctor", "system"
+}
+
+message Completed {
+  int64 completed_at = 1;
+  string session_id = 2;
+}
+
+message NoShow {
+  int64 no_show_at = 1;
+  string no_show_type = 2;  // "patient", "doctor"
+}
+
+message Rescheduled {
+  int64 rescheduled_at = 1;
+  string new_booking_id = 2;
+  string rescheduled_by = 3;  // "patient", "doctor"
+}

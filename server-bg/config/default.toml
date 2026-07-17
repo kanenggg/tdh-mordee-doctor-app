@@ -1,0 +1,68 @@
+[http_server]
+host = "0.0.0.0"
+port = 8081
+
+[service]
+iam_gatekeeper_base_uri = "http://localhost:9101"
+
+[firestore]
+gcp_project_id = "mordee-doctor-app-dev"
+database_id = "(default)"
+
+[firestore.collections]
+notifications = "notifications"
+fcm_tokens = "fcm_tokens"
+
+[firebase]
+database_url = "https://mordee-doctor-app-dev-default-rtdb.asia-southeast1.firebasedatabase.app/"
+
+[firebase.collections]
+appointments = "appointments"
+
+[fcm]
+project_id = "mordee-doctor-app-dev"
+api_v1 = "https://fcm.googleapis.com/v1/projects"
+
+[fcm.circuit_breaker]
+enabled = false
+failure_threshold = 5
+success_threshold = 2
+open_timeout_secs = 60
+
+[telemetry]
+service_name = "doctor-app-bg"
+enabled = true
+
+[pubsub]
+gcp_project_id = "tdg-dh-truehealth-core-nonprod"
+emulator_host = ""
+
+[pubsub.topics]
+doctor_notifications = "doctor-notification-topic-v1"
+doctor_profile_approved = "doctor-profile.approved"
+doctor_profile_status_updated = "doctor-profile.status-updated"
+
+[doctor_profile_outbox]
+# Disabled by default so notification/calendar-only deployments need no PostgreSQL.
+# Enable with DOCTOR_PROFILE_OUTBOX__ENABLED=true and POSTGRES__* credentials.
+enabled = false
+batch_size = 10
+lease_seconds = 60
+poll_seconds = 1
+publish_timeout_seconds = 5
+
+[cloud_tasks]
+gcp_project_id = "tdg-dh-truehealth-core-nonprod"
+gcp_location = "asia-southeast1"
+queue_name = "mordee-doctorapp-notification-scheduler"
+emulator_host = ""
+handler_base_url = "http://doctor.api.tdh.bluewhale.space/webhook/v1/task/notification"
+oidc_service_account_email = ""
+oidc_audience = ""
+
+[retry]
+max_retries = 3
+base_delay_ms = 1000
+max_delay_ms = 10000
+max_elapsed_time_ms = 30000
+jitter_ms = 500

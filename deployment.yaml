@@ -1,0 +1,6 @@
+templateVersion: v2
+releaseVersion: v1.0.0
+services:
+  server:
+    version: v1.0.0
+    deployAfterRelease: false

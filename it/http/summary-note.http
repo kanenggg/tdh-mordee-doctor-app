@@ -1,0 +1,397 @@
+### Basic request with no prescription and no follow-up
+
+POST {{host}}/consultation/v1/summarization/submit HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Tdh-Sec-Iam-User-Identity: {{doctorIdentity}}
+
+{
+  "appointmentId": "{{submitAppointmentId}}",
+  "followUpInfo": {
+    "__type": "NoFollowUp",
+    "noteToStaff": "No follow-up needed"
+  },
+  "prescription": {
+    "drugAllergyInfo": {
+      "__type": "NoDrugAllergies"
+    },
+    "prescriptionItems": {
+      "__type": "NoPrescription"
+    }
+  },
+  "summaryNote": {
+    "chiefComplaint": "Headache",
+    "diagnosis": "Tension-type headache",
+    "icd10": [
+      {
+        "code": "G44.2",
+        "description": "Tension-type headache"
+      }
+    ],
+    "illnessDuration": {
+      "value": 2,
+      "unit": "days"
+    },
+    "noteToStaff": "Follow up in 1 week if symptoms persist",
+    "presentIllness": "Patient presents with persistent headache for 3 days",
+    "recommendations": "Rest, hydration, and over-the-counter pain relief"
+  }
+}
+
+### With prescription only
+
+POST {{host}}/consultation/v1/summarization/submit HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Tdh-Sec-Iam-User-Identity: {{doctorIdentity}}
+
+{
+  "appointmentId": "20260403100005",
+  "followUpInfo": {
+    "__type": "NoFollowUp",
+    "noteToStaff": null
+  },
+  "prescription": {
+    "drugAllergyInfo": {
+      "__type": "NoDrugAllergies"
+    },
+    "prescriptionItems": {
+      "__type": "Prescription",
+      "items": [
+        {
+          "pricePlanId": 1,
+          "medicineId": 1,
+          "medicineName": "Paracetamol 500mg",
+          "dose": {
+            "id": 1,
+            "value": 500,
+            "unit": "mg"
+          },
+          "quantity": 10,
+          "route": {
+            "id": 1,
+            "description": "Oral"
+          },
+          "frequency": {
+            "id": 1,
+            "description": "3 times a day"
+          },
+          "indication": {
+            "id": 1,
+            "description": "Pain relief"
+          },
+          "foodTiming": {
+            "id": 1,
+            "description": "After meals"
+          },
+          "mealInstruction": {
+            "id": 1,
+            "description": "Take with food"
+          },
+          "duration": {
+            "id": 1,
+            "value": 3,
+            "unit": "days"
+          },
+          "cautions": null,
+          "remark": "Maximum 4g per day",
+          "noteToPatient": "Take with food to avoid stomach upset",
+          "unitPrice": 2.5
+        }
+      ]
+    }
+  },
+  "summaryNote": {
+    "chiefComplaint": "Fever and body aches",
+    "diagnosis": "Viral fever",
+    "icd10": [
+      {
+        "code": "A08.4",
+        "description": "Viral enteritis"
+      }
+    ],
+    "illnessDuration": {
+      "value": 2,
+      "unit": "days"
+    },
+    "noteToStaff": null,
+    "presentIllness": "Patient has fever for 2 days with body aches",
+    "recommendations": "Rest and hydration"
+  }
+}
+
+### With prescription + drug allergies
+
+POST {{host}}/consultation/v1/summarization/submit HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Tdh-Sec-Iam-User-Identity: {{doctorIdentity}}
+
+{
+  "appointmentId": "APT-DRUG-ALLERGY",
+  "followUpInfo": {
+    "__type": "NoFollowUp",
+    "noteToStaff": null
+  },
+  "prescription": {
+    "drugAllergyInfo": {
+      "__type": "HasDrugAllergies",
+      "drugAllergies": [
+        {
+          "id": 1,
+          "displayText": "Penicillin"
+        },
+        {
+          "id": 2,
+          "displayText": "Sulfa drugs"
+        }
+      ]
+    },
+    "prescriptionItems": {
+      "__type": "Prescription",
+      "items": [
+        {
+          "pricePlanId": 4,
+          "medicineId": 4,
+          "medicineName": "Azithromycin 250mg",
+          "dose": {
+            "id": 1,
+            "value": 250,
+            "unit": "mg"
+          },
+          "quantity": 6,
+          "route": {
+            "id": 1,
+            "description": "Oral"
+          },
+          "frequency": {
+            "id": 1,
+            "description": "Once a day"
+          },
+          "indication": {
+            "id": 2,
+            "description": "Bacterial infection"
+          },
+          "foodTiming": {
+            "id": 2,
+            "description": "Before meals"
+          },
+          "mealInstruction": {
+            "id": 2,
+            "description": "Take 1 hour before or 2 hours after meals"
+          },
+          "duration": {
+            "id": 1,
+            "value": 5,
+            "unit": "days"
+          },
+          "cautions": "Patient allergic to Penicillin and Sulfa - safe alternative",
+          "remark": "Day 1: 500mg, Days 2-5: 250mg",
+          "noteToPatient": "Complete full 5-day course",
+          "unitPrice": 12.0
+        }
+      ]
+    }
+  },
+  "summaryNote": {
+    "chiefComplaint": "Sinus infection",
+    "diagnosis": "Acute bacterial sinusitis",
+    "icd10": [
+      {
+        "code": "J01.9",
+        "description": "Acute sinusitis, unspecified"
+      }
+    ],
+    "illnessDuration": {
+      "value": 10,
+      "unit": "days"
+    },
+    "noteToStaff": "Patient has known Penicillin and Sulfa allergies - prescribed Azithromycin as alternative",
+    "presentIllness": "Patient presents with 10 days of nasal congestion, facial pain, and purulent nasal discharge",
+    "recommendations": "Complete antibiotic course, nasal saline irrigation, follow up if no improvement in 72 hours"
+  }
+}
+
+### With follow-up only
+
+POST {{host}}/consultation/v1/summarization/submit HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Tdh-Sec-Iam-User-Identity: {{doctorIdentity}}
+
+{
+  "appointmentId": "20260403100001",
+  "followUpInfo": {
+    "__type": "ScheduleAppointment",
+    "followStartDatetime": 1717430400,
+    "followEndDatetime": 1717432200,
+    "visitTypes": ["FollowUp"],
+    "noteToPatient": "Please come back for follow-up in 2 weeks",
+    "noteToStaff": "Monitor blood pressure"
+  },
+  "prescription": {
+    "drugAllergyInfo": {
+      "__type": "NoDrugAllergies"
+    },
+    "prescriptionItems": {
+      "__type": "NoPrescription"
+    }
+  },
+  "summaryNote": {
+    "chiefComplaint": "Hypertension follow-up",
+    "diagnosis": "Essential hypertension",
+    "icd10": [
+      {
+        "code": "I10",
+        "description": "Essential hypertension"
+      }
+    ],
+    "illnessDuration": {
+      "value": 30,
+      "unit": "days"
+    },
+    "noteToStaff": null,
+    "presentIllness": "Regular follow-up for blood pressure monitoring",
+    "recommendations": "Continue current medication, monitor BP daily"
+  }
+}
+
+### With all conditions (prescription + follow-up + complete summary)
+
+POST {{host}}/consultation/v1/summarization/submit HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Tdh-Sec-Iam-User-Identity: {{doctorIdentity}}
+
+{
+  "appointmentId": "{{submitAppointmentId}}",
+  "followUpInfo": {
+    "__type": "ScheduleAppointment",
+    "followStartDatetime": 1718035200,
+    "followEndDatetime": 1718037000,
+    "visitTypes": ["FollowUp"],
+    "noteToPatient": "Schedule follow-up consultation in 1 week",
+    "noteToStaff": "Review lab results before next visit"
+  },
+  "prescription": {
+    "drugAllergyInfo": {
+      "__type": "HasDrugAllergies",
+      "drugAllergies": [
+        {
+          "id": 1,
+          "displayText": "Penicillin"
+        },
+        {
+          "id": 2,
+          "displayText": "Sulfa drugs"
+        }
+      ]
+    },
+    "prescriptionItems": {
+      "__type": "Prescription",
+      "items": [
+        {
+          "pricePlanId": 2,
+          "medicineId": 2,
+          "medicineName": "Amoxicillin 500mg",
+          "dose": {
+            "id": 1,
+            "value": 500,
+            "unit": "mg"
+          },
+          "quantity": 21,
+          "route": {
+            "id": 1,
+            "description": "Oral"
+          },
+          "frequency": {
+            "id": 2,
+            "description": "3 times a day"
+          },
+          "indication": {
+            "id": 2,
+            "description": "Bacterial infection"
+          },
+          "foodTiming": {
+            "id": 1,
+            "description": "After meals"
+          },
+          "mealInstruction": {
+            "id": 1,
+            "description": "Take with food"
+          },
+          "duration": {
+            "id": 1,
+            "value": 7,
+            "unit": "days"
+          },
+          "cautions": "Allergic to penicillin - do not prescribe",
+          "remark": "Complete full course",
+          "noteToPatient": "Take all pills even if you feel better",
+          "unitPrice": 5.5
+        },
+        {
+          "pricePlanId": 3,
+          "medicineId": 3,
+          "medicineName": "Ibuprofen 400mg",
+          "dose": {
+            "id": 1,
+            "value": 400,
+            "unit": "mg"
+          },
+          "quantity": 10,
+          "route": {
+            "id": 1,
+            "description": "Oral"
+          },
+          "frequency": {
+            "id": 3,
+            "description": "3 times a day as needed"
+          },
+          "indication": {
+            "id": 3,
+            "description": "Pain relief"
+          },
+          "foodTiming": {
+            "id": 1,
+            "description": "After meals"
+          },
+          "mealInstruction": {
+            "id": 2,
+            "description": "Take with food or milk"
+          },
+          "duration": {
+            "id": 1,
+            "value": 3,
+            "unit": "days"
+          },
+          "cautions": "Avoid on empty stomach",
+          "remark": "Maximum 1200mg per day",
+          "noteToPatient": "Take with food to avoid stomach irritation",
+          "unitPrice": 3.0
+        }
+      ]
+    }
+  },
+  "summaryNote": {
+    "chiefComplaint": "Severe sore throat with fever",
+    "diagnosis": "Acute pharyngitis - bacterial",
+    "icd10": [
+      {
+        "code": "J02.9",
+        "description": "Acute pharyngitis, unspecified"
+      },
+      {
+        "code": "R50.9",
+        "description": "Fever, unspecified"
+      }
+    ],
+    "illnessDuration": {
+      "value": 2,
+      "unit": "days"
+    },
+    "noteToStaff": "Patient has known penicillin allergy - flagged in system",
+    "presentIllness": "Patient presents with 2-day history of sore throat, fever 38.5°C, difficulty swallowing, no cough",
+    "recommendations": "Complete antibiotic course, rest, hydration, monitor for worsening symptoms. If fever persists beyond 48 hours or difficulty breathing develops, seek immediate care."
+  }
+}

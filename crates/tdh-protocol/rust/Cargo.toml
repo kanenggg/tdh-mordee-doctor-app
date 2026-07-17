@@ -1,0 +1,38 @@
+[package]
+name = "tdh-protocol"
+version = "0.4.4"
+edition = "2021"
+description = "TDH protocol types with serde JSON support"
+license = "Internal"
+publish = ["kellnr"]
+autotests = false
+
+[dependencies]
+bigdecimal = { version = "0.4", features = ["serde"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+jiff = { version = "0.2", features = ["serde"] }
+utoipa = { version = "5", optional = true }
+base64 = { version = "0.22", optional = true }
+anyhow = "1"
+sqlx = { version = "0.8", optional = true, features = [
+  "runtime-tokio-rustls",
+  "postgres",
+  "json",
+  "derive",
+] }
+# Added from protocol-rs
+url = { version = "2.5", features = ["serde"] }
+rust_decimal = "1.40.0"
+hex = { version = "0.4", optional = true }
+bytes = { version = "1", features = ["serde"], optional = true }
+thiserror = "2.0"
+uuid = { version = "1", features = ["serde"] }
+
+[features]
+default = ["gcp-pubsub", "sqlx", "openapi", "schema", "bytes"]
+gcp-pubsub = ["dep:base64"]
+sqlx = ["dep:sqlx"]
+openapi = ["dep:utoipa"]
+schema = []
+bytes = ["dep:bytes"]

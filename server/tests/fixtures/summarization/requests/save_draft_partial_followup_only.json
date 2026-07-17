@@ -1,0 +1,13 @@
+{
+  "appointmentId": "APT-004",
+  "summaryNote": null,
+  "prescription": null,
+  "followUpInfo": {
+    "__type": "ScheduleAppointment",
+    "followStartDatetime": 1705276800,
+    "followEndDatetime": 1705278600,
+    "visitTypes": ["FollowUp"],
+    "noteToPatient": "Please come back for a follow-up check",
+    "noteToStaff": "Schedule follow-up in cardiology"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "appointmentId": "APT-001",
+  "bizUnitId": 1,
+  "bizCenterId": 1,
+  "patientId": 1,
+  "summaryNote": {
+    "presentIllness": "Patient presents with persistent headache for the past 3 days",
+    "chiefComplaint": "Headache",
+    "diagnosis": "Tension-type headache",
+    "recommendations": "Rest, hydration, and over-the-counter pain relief",
+    "icd10": [
+      {
+        "code": "G44.2",
+        "description": "Tension-type headache"
+      }
+    ],
+    "illnessDuration": {
+      "value": 3,
+      "unit": "days"
+    },
+    "noteToStaff": "Follow up in 1 week if symptoms persist"
+  },
+  "prescription": {
+    "drugAllergyInfo": {
+      "__type": "NoDrugAllergies"
+    },
+    "prescriptionItems": {
+      "__type": "NoPrescription"
+    }
+  },
+  "followUpInfo": {
+    "__type": "NoFollowUp",
+    "noteToStaff": null
+  }
+}

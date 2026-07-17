@@ -1,0 +1,1335 @@
+### BG doctor calendar update
+### Edit raw event JSON in each Kulala pre-request script.
+### The script encodes it into Pub/Sub message.data before sending.
+### Run server-bg on {{bgHost}} (default http://localhost:8081).
+### Sequence-dependent cases should be executed in file order.
+
+### TimeslotReserved
+
+< {%
+  const event = {
+    "__type": "TimeslotReserved",
+    "bookingId": "bg-cal-reserve-cancel-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "bizUnitId": 1,
+    "reservedFrom": 1787965200,
+    "reservationDurationSec": 1800,
+    "consultationChannel": "video",
+    "reservedAt": 1787965100
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "timeslotreserved-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### ReservationCancelled
+
+< {%
+  const event = {
+    "__type": "ReservationCancelled",
+    "bookingId": "bg-cal-reserve-cancel-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "bizUnitId": 1,
+    "cancelledAt": 1787965260
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "reservationcancelled-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### Setup ReservationExpired - TimeslotReserved
+
+< {%
+  const event = {
+    "__type": "TimeslotReserved",
+    "bookingId": "bg-cal-reserve-expired-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "bizUnitId": 1,
+    "reservedFrom": 1787965200,
+    "reservationDurationSec": 1800,
+    "consultationChannel": "video",
+    "reservedAt": 1787965100
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "setup-reservationexpired-timeslotreserved-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### ReservationExpired
+
+< {%
+  const event = {
+    "__type": "ReservationExpired",
+    "bookingId": "bg-cal-reserve-expired-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "bizUnitId": 1,
+    "cancelledAt": 1787965320
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "reservationexpired-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### ConsultationBooked
+
+< {%
+  const event = {
+    "__type": "ConsultationBooked",
+    "bookingId": "bg-cal-success-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "bizUnitId": 1,
+    "paymentModuleId": 1,
+    "bookingType": {
+      "__type": "scheduled"
+    },
+    "consultationStartTime": 1787965200,
+    "consultationDurationInSecond": 1800,
+    "consultationChannel": "video",
+    "bookedAt": 1787965100,
+    "symptoms": "HTTP calendar test",
+    "consultationFee": 100
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "consultationbooked-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### SessionCreated
+
+< {%
+  const event = {
+    "__type": "SessionCreated",
+    "bookingId": "bg-cal-success-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "sessionProvider": "daily",
+    "consultationStartTime": 1787965200,
+    "consultationDurationInSecond": 1800,
+    "createdAt": 1787965130
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "sessioncreated-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### PatientJoined
+
+< {%
+  const event = {
+    "__type": "PatientJoined",
+    "bookingId": "bg-cal-success-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "joinedAt": 1787965210
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "patientjoined-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### DoctorJoined
+
+< {%
+  const event = {
+    "__type": "DoctorJoined",
+    "bookingId": "bg-cal-success-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "joinedAt": 1787965220
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "doctorjoined-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### AllParticipantJoined
+
+< {%
+  const event = {
+    "__type": "AllParticipantJoined",
+    "bookingId": "bg-cal-success-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "patientJoinedAt": 1787965210,
+    "doctorJoinedAt": 1787965220
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "allparticipantjoined-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### PatientDisconnected
+
+< {%
+  const event = {
+    "__type": "PatientDisconnected",
+    "bookingId": "bg-cal-success-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "disconnectedAt": 1787965800
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "patientdisconnected-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### DoctorDisconnected
+
+< {%
+  const event = {
+    "__type": "DoctorDisconnected",
+    "bookingId": "bg-cal-success-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "disconnectedAt": 1787965860
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "doctordisconnected-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### SessionTerminated - successfulSession
+
+< {%
+  const event = {
+    "__type": "SessionTerminated",
+    "bookingId": "bg-cal-success-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "terminationCode": {
+      "__type": "successfulSession"
+    },
+    "terminatedBy": {
+      "__type": "System"
+    },
+    "terminatedAt": 1787967000
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "sessionterminated-successfulsession-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### ConsultationSummarized
+
+< {%
+  const event = {
+    "__type": "ConsultationSummarized",
+    "bookingId": "bg-cal-success-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "doctorNote": "Completed by HTTP test",
+    "prescriptionInfo": {
+      "prescriptionRefcode": "rx-bg-cal-success-1",
+      "medicineItems": [],
+      "expireAt": 1788051600
+    },
+    "summarizedAt": 1787967100
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "consultationsummarized-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### FollowUpRequired
+
+< {%
+  const event = {
+    "__type": "FollowUpRequired",
+    "previousBookingId": "bg-cal-success-1",
+    "followUpId": "bg-cal-follow-up-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "bizUnitId": 1,
+    "consultationStartTime": 1788051600,
+    "consultationDurationInSecond": 1800,
+    "consultationFee": 100,
+    "consultationChannel": "video",
+    "additionalPatientNote": "HTTP follow-up note",
+    "internalNote": "HTTP internal note",
+    "createdAt": 1787967200
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "followuprequired-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### PatientAcceptedFollowUp
+
+< {%
+  const event = {
+    "__type": "PatientAcceptedFollowUp",
+    "previousBookingId": "bg-cal-success-1",
+    "followUpId": "bg-cal-follow-up-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "consultationStartTime": 1788051600,
+    "consultationDurationInSecond": 1800,
+    "consultationFee": 100,
+    "symptoms": "Follow-up symptoms",
+    "consultationChannel": "video",
+    "createdAt": 1787967300
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "patientacceptedfollowup-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### FollowUpCancelled
+
+< {%
+  const event = {
+    "__type": "FollowUpCancelled",
+    "previousBookingId": "bg-cal-success-1",
+    "followUpId": "bg-cal-follow-up-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "createdAt": 1787967400
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "followupcancelled-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### Setup FollowUpRequestExpired - ConsultationBooked
+
+< {%
+  const event = {
+    "__type": "ConsultationBooked",
+    "bookingId": "bg-cal-follow-expired-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "bizUnitId": 1,
+    "paymentModuleId": 1,
+    "bookingType": {
+      "__type": "scheduled"
+    },
+    "consultationStartTime": 1787965200,
+    "consultationDurationInSecond": 1800,
+    "consultationChannel": "video",
+    "bookedAt": 1787965100,
+    "symptoms": "HTTP follow-up expired setup",
+    "consultationFee": 100
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "setup-followuprequestexpired-consultationbooked-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### Setup FollowUpRequestExpired - SessionCreated
+
+< {%
+  const event = {
+    "__type": "SessionCreated",
+    "bookingId": "bg-cal-follow-expired-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "sessionProvider": "daily",
+    "consultationStartTime": 1787965200,
+    "consultationDurationInSecond": 1800,
+    "createdAt": 1787965130
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "setup-followuprequestexpired-sessioncreated-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### Setup FollowUpRequestExpired - SessionTerminated
+
+< {%
+  const event = {
+    "__type": "SessionTerminated",
+    "bookingId": "bg-cal-follow-expired-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "terminationCode": {
+      "__type": "successfulSession"
+    },
+    "terminatedBy": {
+      "__type": "System"
+    },
+    "terminatedAt": 1787967000
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "setup-followuprequestexpired-sessionterminated-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### Setup FollowUpRequestExpired - ConsultationSummarized
+
+< {%
+  const event = {
+    "__type": "ConsultationSummarized",
+    "bookingId": "bg-cal-follow-expired-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "doctorNote": "Completed by HTTP test",
+    "prescriptionInfo": {
+      "prescriptionRefcode": "rx-bg-cal-follow-expired-1",
+      "medicineItems": [],
+      "expireAt": 1788051600
+    },
+    "summarizedAt": 1787967100
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "setup-followuprequestexpired-consultationsummarized-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### FollowUpRequestExpired
+
+< {%
+  const event = {
+    "__type": "FollowUpRequestExpired",
+    "previousBookingId": "bg-cal-follow-expired-1",
+    "followUpId": "bg-cal-follow-expired-1",
+    "doctorId": 123,
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "createdAt": 1787967200
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "followuprequestexpired-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### Setup ConsultationCancelled - ConsultationBooked
+
+< {%
+  const event = {
+    "__type": "ConsultationBooked",
+    "bookingId": "bg-cal-cancelled-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "bizUnitId": 1,
+    "paymentModuleId": 1,
+    "bookingType": {
+      "__type": "scheduled"
+    },
+    "consultationStartTime": 1787965200,
+    "consultationDurationInSecond": 1800,
+    "consultationChannel": "video",
+    "bookedAt": 1787965100,
+    "symptoms": "HTTP cancellation setup",
+    "consultationFee": 100
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "setup-consultationcancelled-consultationbooked-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### ConsultationCancelled
+
+< {%
+  const event = {
+    "__type": "ConsultationCancelled",
+    "bookingId": "bg-cal-cancelled-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "bizUnitId": 1,
+    "paymentModuleId": 1,
+    "cancelCode": "PATIENT_CANCELLED",
+    "cancelledAt": 1787965500
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "consultationcancelled-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### Setup patientAbsent - ConsultationBooked
+
+< {%
+  const event = {
+    "__type": "ConsultationBooked",
+    "bookingId": "bg-cal-term-patient-absent-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "bizUnitId": 1,
+    "paymentModuleId": 1,
+    "bookingType": {
+      "__type": "scheduled"
+    },
+    "consultationStartTime": 1787965200,
+    "consultationDurationInSecond": 1800,
+    "consultationChannel": "video",
+    "bookedAt": 1787965100,
+    "symptoms": "HTTP termination setup",
+    "consultationFee": 100
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "setup-patientabsent-consultationbooked-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### Setup patientAbsent - SessionCreated
+
+< {%
+  const event = {
+    "__type": "SessionCreated",
+    "bookingId": "bg-cal-term-patient-absent-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "sessionProvider": "daily",
+    "consultationStartTime": 1787965200,
+    "consultationDurationInSecond": 1800,
+    "createdAt": 1787965130
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "setup-patientabsent-sessioncreated-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### SessionTerminated - patientAbsent
+
+< {%
+  const event = {
+    "__type": "SessionTerminated",
+    "bookingId": "bg-cal-term-patient-absent-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "terminationCode": {
+      "__type": "patientAbsent"
+    },
+    "terminatedBy": {
+      "__type": "System"
+    },
+    "terminatedAt": 1787967000
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "sessionterminated-patientabsent-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### Setup doctorAbsent - ConsultationBooked
+
+< {%
+  const event = {
+    "__type": "ConsultationBooked",
+    "bookingId": "bg-cal-term-doctor-absent-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "bizUnitId": 1,
+    "paymentModuleId": 1,
+    "bookingType": {
+      "__type": "scheduled"
+    },
+    "consultationStartTime": 1787965200,
+    "consultationDurationInSecond": 1800,
+    "consultationChannel": "video",
+    "bookedAt": 1787965100,
+    "symptoms": "HTTP termination setup",
+    "consultationFee": 100
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "setup-doctorabsent-consultationbooked-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### Setup doctorAbsent - SessionCreated
+
+< {%
+  const event = {
+    "__type": "SessionCreated",
+    "bookingId": "bg-cal-term-doctor-absent-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "sessionProvider": "daily",
+    "consultationStartTime": 1787965200,
+    "consultationDurationInSecond": 1800,
+    "createdAt": 1787965130
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "setup-doctorabsent-sessioncreated-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### SessionTerminated - doctorAbsent
+
+< {%
+  const event = {
+    "__type": "SessionTerminated",
+    "bookingId": "bg-cal-term-doctor-absent-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "terminationCode": {
+      "__type": "doctorAbsent",
+      "patientJoinedAt": 1787965210
+    },
+    "terminatedBy": {
+      "__type": "System"
+    },
+    "terminatedAt": 1787967000
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "sessionterminated-doctorabsent-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### Setup bothPartiesAbsent - ConsultationBooked
+
+< {%
+  const event = {
+    "__type": "ConsultationBooked",
+    "bookingId": "bg-cal-term-both-absent-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "bizUnitId": 1,
+    "paymentModuleId": 1,
+    "bookingType": {
+      "__type": "scheduled"
+    },
+    "consultationStartTime": 1787965200,
+    "consultationDurationInSecond": 1800,
+    "consultationChannel": "video",
+    "bookedAt": 1787965100,
+    "symptoms": "HTTP termination setup",
+    "consultationFee": 100
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "setup-bothpartiesabsent-consultationbooked-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### Setup bothPartiesAbsent - SessionCreated
+
+< {%
+  const event = {
+    "__type": "SessionCreated",
+    "bookingId": "bg-cal-term-both-absent-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "sessionProvider": "daily",
+    "consultationStartTime": 1787965200,
+    "consultationDurationInSecond": 1800,
+    "createdAt": 1787965130
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "setup-bothpartiesabsent-sessioncreated-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### SessionTerminated - bothPartiesAbsent
+
+< {%
+  const event = {
+    "__type": "SessionTerminated",
+    "bookingId": "bg-cal-term-both-absent-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "terminationCode": {
+      "__type": "bothPartiesAbsent"
+    },
+    "terminatedBy": {
+      "__type": "System"
+    },
+    "terminatedAt": 1787967000
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "sessionterminated-bothpartiesabsent-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### Setup technicalError - ConsultationBooked
+
+< {%
+  const event = {
+    "__type": "ConsultationBooked",
+    "bookingId": "bg-cal-term-technical-error-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "bizUnitId": 1,
+    "paymentModuleId": 1,
+    "bookingType": {
+      "__type": "scheduled"
+    },
+    "consultationStartTime": 1787965200,
+    "consultationDurationInSecond": 1800,
+    "consultationChannel": "video",
+    "bookedAt": 1787965100,
+    "symptoms": "HTTP termination setup",
+    "consultationFee": 100
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "setup-technicalerror-consultationbooked-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### Setup technicalError - SessionCreated
+
+< {%
+  const event = {
+    "__type": "SessionCreated",
+    "bookingId": "bg-cal-term-technical-error-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "sessionProvider": "daily",
+    "consultationStartTime": 1787965200,
+    "consultationDurationInSecond": 1800,
+    "createdAt": 1787965130
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "setup-technicalerror-sessioncreated-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### SessionTerminated - technicalError
+
+< {%
+  const event = {
+    "__type": "SessionTerminated",
+    "bookingId": "bg-cal-term-technical-error-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "terminationCode": {
+      "__type": "technicalError",
+      "errorMessage": "HTTP test network error"
+    },
+    "terminatedBy": {
+      "__type": "System"
+    },
+    "terminatedAt": 1787967000
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/doctor-calendar/update HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "sessionterminated-technicalerror-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "doctor-calendar-update-sub"
+}
+
+### Alias route - status changed
+
+< {%
+  const event = {
+    "__type": "ConsultationBooked",
+    "bookingId": "bg-cal-alias-1",
+    "patientIdentity": {
+      "accountId": 456,
+      "userProfileId": 789,
+      "tenantId": 1,
+      "oidcUserId": "test-patient"
+    },
+    "doctorId": 123,
+    "bizUnitId": 1,
+    "paymentModuleId": 1,
+    "bookingType": {
+      "__type": "scheduled"
+    },
+    "consultationStartTime": 1787965200,
+    "consultationDurationInSecond": 1800,
+    "consultationChannel": "video",
+    "bookedAt": 1787965100,
+    "symptoms": "HTTP calendar alias route test",
+    "consultationFee": 100
+  };
+  request.variables.set("messageData", Buffer.from(JSON.stringify(event)).toString("base64"));
+%}
+
+POST {{bgHost}}/consultation/v1/events/status-changed HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "message": {
+    "data": "{{messageData}}",
+    "messageId": "alias-route-status-changed-{{$timestamp}}",
+    "publishTime": "2026-06-24T00:00:00Z",
+    "attributes": {}
+  },
+  "subscription": "consultation-status-changed-sub"
+}

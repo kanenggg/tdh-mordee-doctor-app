@@ -1,0 +1,94 @@
+[http_server]
+host = "0.0.0.0"
+port = 8080
+
+[gcp]
+project_id = "mordee-doctor-app-dev"
+
+[service]
+ehr_service_base_uri = "http://localhost:9002"
+qolphin_base_uri = "https://tdh-mordee-qolphin-v1-272270411648.asia-southeast1.run.app"
+biz_apm_base_uri = "http://localhost:9003"
+doctor_profile_immediate_delivery_enabled = true
+biz_jade_service_base_uri = "http://localhost:9004"
+privilege_service_base_uri = "http://localhost:8081/privilege"
+consultation_base_uri = "http://localhost:9100"
+iam_gatekeeper_base_uri = "http://localhost:9101"
+payment_internal_base_uri = "http://localhost:9102"
+# eagle ekyc service
+eagle_base_uri = "http://localhost:9100"
+
+[firestore]
+gcp_project_id = "mordee-doctor-app-dev"
+database_id = "(default)"
+
+[firestore.collections]
+appointments = "appointments"
+notifications = "notifications"
+doctors = "doctors"
+onboardings = "onboardings"
+fcm_tokens = "fcm_tokens"
+
+[firebase]
+database_url = "https://mordee-doctor-app-dev-default-rtdb.asia-southeast1.firebasedatabase.app/"
+
+[firebase.collections]
+appointments = "appointments"
+
+[fcm]
+project_id = "mordee-doctor-app-dev"
+api_v1 = "https://fcm.googleapis.com/v1/projects"
+
+[webhook]
+pubsub_ack_deadline_secs = 30
+verify_signature = false
+
+[telemetry]
+service_name = "doctor-app"
+enabled = true
+# exporter_otlp_endpoint defaults to http://localhost:4317 if not set
+
+[pubsub]
+gcp_project_id = "tdg-dh-truehealth-core-nonprod"
+# Optional: set to "localhost:8085" for local pubsub emulator
+emulator_host = ""
+
+[pubsub.subscriptions]
+notification = "doctor-notification-v1-sub"
+consultation = "doctor-consultation-event-sub"
+doctor_calendar_update = "doctor-calendar-update-sub"
+doctor_notification_send = "doctor-notification-send-sub"
+
+[pubsub.topics]
+appointments = "appointments"
+consultations = "consultations"
+system = "system"
+broadcast = "broadcast"
+doctor_notifications = "doctor-notification-topic-v1"
+doctor_profile_approved = "doctor-profile.approved"
+doctor_profile_status_updated = "doctor-profile.status-updated"
+
+[kms]
+doctor_proile_pii_data = "projects/p/locations/l/keyRings/r/cryptoKeys/k"
+
+[gcs]
+# Google Cloud Storage bucket for onboarding document uploads
+bucket_name = "mordee-doctor-app-uploads"
+# Base URL for accessing uploaded files (public or signed URL base)
+base_url = "https://storage.googleapis.com/mordee-doctor-app-uploads"
+# Override with GCS__SIGNING_SERVICE_ACCOUNT_EMAIL.
+signing_service_account_email = ""
+signed_url_ttl_secs = 300
+
+[postgres]
+# PostgreSQL connection URL
+# Override with POSTGRES__DATABASE_URL env var
+host = "localhost"
+port = 5432
+user = "biz_doctor_admin"
+password = "password"
+dbname = "biz_doctor"
+
+[paseto]
+
+local_key = "0000000000000000000000000000000000000000000000000000000000000000"

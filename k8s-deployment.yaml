@@ -1,0 +1,145 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/instance: mordee-doctorapp-server
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: chart-doctorapp-server
+    app.kubernetes.io/version: 1.16.0
+    argocd.argoproj.io/instance: mordee-doctorapp-server
+    helm.sh/chart: chart-doctorapp-server-0.1.0
+  name: mordee-doctorapp-server
+  namespace: mordee-doctorapp
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: mordee-doctorapp-server
+      app.kubernetes.io/name: chart-doctorapp-server
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: mordee-doctorapp-server
+        app.kubernetes.io/name: chart-doctorapp-server
+    spec:
+      containers:
+        - env:
+            # --- GCP (top-level) ---
+            - name: GCP__PROJECT_ID
+              value: mordee-doctor-app-dev
+            # --- System ---
+            - name: SYS__HOST
+              value: 0.0.0.0
+            - name: SYS__PORT
+              value: '8080'
+            # --- Service URIs ---
+            - name: SERVICE__AUTHN_SERVICE_BASE_URI
+              value: http://authn-service:9000
+            - name: SERVICE__REGISTRATION_BASE_URI
+              value: http://registration-service:9001
+            - name: SERVICE__EHR_SERVICE_BASE_URI
+              value: http://ehr-service:9002
+            - name: SERVICE__PAST_VISIT_BASE_URI
+              value: https://tdh-mordee-qolphin-v1-272270411648.asia-southeast1.run.app
+            - name: SERVICE__CONSULTATION_SERVICE_BASE_URI
+              value: http://consultation-service:9003
+            - name: SERVICE__MEDICINE_SERVICE_BASE_URI
+              value: http://medicine-service:9004
+            # --- Firestore ---
+            - name: FIRESTORE__GCP_PROJECT_ID
+              value: mordee-doctor-app-dev
+            - name: FIRESTORE__DATABASE_ID
+              value: (default)
+            - name: FIRESTORE__COLLECTIONS__APPOINTMENTS
+              value: appointments
+            - name: FIRESTORE__COLLECTIONS__NOTIFICATIONS
+              value: notifications
+            - name: FIRESTORE__COLLECTIONS__DOCTORS
+              value: doctors
+            - name: FIRESTORE__COLLECTIONS__ONBOARDINGS
+              value: onboardings
+            - name: FIRESTORE__COLLECTIONS__FCM_TOKENS
+              value: fcm_tokens
+            # --- Firebase RTDB (auth via Workload Identity ADC) ---
+            - name: FIREBASE__DATABASE_URL
+              value: >-
+                https://mordee-doctor-app-dev-default-rtdb.asia-southeast1.firebasedatabase.app/
+            - name: FIREBASE__COLLECTIONS__APPOINTMENTS
+              value: appointments
+            # --- FCM (auth via Workload Identity ADC) ---
+            - name: FCM__PROJECT_ID
+              value: mordee-doctor-app-dev
+            - name: FCM__API_V1
+              value: https://fcm.googleapis.com/v1/projects
+            # --- Webhook ---
+            - name: WEBHOOK__PUBSUB_ACK_DEADLINE_SECS
+              value: '30'
+            - name: WEBHOOK__VERIFY_SIGNATURE
+              value: 'false'
+            # --- Pub/Sub ---
+            - name: PUBSUB__GCP_PROJECT_ID
+              value: tdg-dh-truehealth-core-nonprod
+            - name: PUBSUB__TOPICS__APPOINTMENTS
+              value: appointments
+            - name: PUBSUB__TOPICS__CONSULTATIONS
+              value: consultations
+            - name: PUBSUB__TOPICS__SYSTEM
+              value: system
+            - name: PUBSUB__TOPICS__BROADCAST
+              value: broadcast
+            # --- Cloud Tasks (auth via Workload Identity ADC) ---
+            - name: CLOUD_TASKS__GCP_PROJECT_ID
+              value: tdg-dh-truehealth-core-nonprod
+            - name: CLOUD_TASKS__GCP_LOCATION
+              value: asia-southeast1
+            - name: CLOUD_TASKS__QUEUE_NAME
+              value: notification-scheduler
+            - name: CLOUD_TASKS__HANDLER_BASE_URL
+              value: http://mordee-doctorapp-server:8080
+            - name: CLOUD_TASKS__SHARED_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: CLOUD_TASKS_SHARED_SECRET
+                  name: mordee-doctorapp-secrets
+            # --- Telemetry ---
+            - name: TELEMETRY__ENABLED
+              value: 'false'
+          image: >-
+            asia-southeast1-docker.pkg.dev/tdg-dh-truehealth-core-nonprod/cossack-docker/doctorapp-server:db4511b
+          imagePullPolicy: IfNotPresent
+          name: chart-doctorapp-server
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+          resources:
+            limits:
+              cpu: '1'
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 1Gi
+          securityContext: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      nodeSelector:
+        cloud.google.com/gke-spot: 'true'
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: mordee-doctorapp
+      serviceAccountName: mordee-doctorapp
+      terminationGracePeriodSeconds: 30
+      tolerations:
+        - effect: NoExecute
+          key: continuity
+          operator: Equal
+          value: preemptible

@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package tdh.protocol.common;
+
+// ConsultationChannel - channel type for consultations
+enum ConsultationChannel {
+  CONSULTATION_CHANNEL_UNSPECIFIED = 0;
+  VIDEO = 1;
+  CHAT = 2;
+  VOICE = 3;
+}
+
+// BookingType - appointment booking type
+enum BookingType {
+  BOOKING_TYPE_UNSPECIFIED = 0;
+  SCHEDULED = 1;
+  INSTANT = 2;
+}

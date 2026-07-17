@@ -1,0 +1,238 @@
+syntax = "proto3";
+
+package tdh.protocol.common;
+
+import "common/patient.proto";
+import "common/consulting.proto";
+import "google/protobuf/empty.proto";
+
+// ConsultationEvent - discriminated union via oneof
+// Main consultation event wrapper
+message ConsultationEvent {
+  oneof event {
+    TimeslotReserved timeslot_reserved = 1;
+    ReservationCancelled reservation_cancelled = 2;
+    ReservationExpired reservation_expired = 3;
+    ConsultationBooked consultation_booked = 4;
+    ConsultationCancelled consultation_cancelled = 5;
+    SessionCreated session_created = 6;
+    PatientJoined patient_joined = 7;
+    DoctorJoined doctor_joined = 8;
+    AllParticipantJoined all_participant_joined = 9;
+    PatientDisconnected patient_disconnected = 10;
+    DoctorDisconnected doctor_disconnected = 11;
+    SessionTerminated session_terminated = 12;
+    ConsultationSummarized consultation_summarized = 13;
+    FollowUpRequired follow_up_required = 14;
+    FollowUpRequestExpired follow_up_request_expired = 15;
+    PatientAcceptedFollowUp patient_accepted_follow_up = 16;
+    FollowUpCancelled follow_up_cancelled = 17;
+  }
+}
+
+// ===== Pre-Session Events =====
+
+message TimeslotReserved {
+  string booking_id = 1;
+  PatientIdentity patient_identity = 2;
+  int32 doctor_id = 3;
+  int32 biz_unit_id = 4;
+  int64 reserved_from = 5;
+  int32 reservation_duration_sec = 6;
+  ConsultationChannel consultation_channel = 7;
+  int64 reserved_at = 8;
+}
+
+message ReservationCancelled {
+  string booking_id = 1;
+  PatientIdentity patient_identity = 2;
+  int32 doctor_id = 3;
+  int32 biz_unit_id = 4;
+  int64 cancelled_at = 5;
+}
+
+message ReservationExpired {
+  string booking_id = 1;
+  PatientIdentity patient_identity = 2;
+  int32 doctor_id = 3;
+  int32 biz_unit_id = 4;
+  int64 cancelled_at = 5;
+}
+
+message ConsultationBooked {
+  string booking_id = 1;
+  PatientIdentity patient_identity = 2;
+  int32 doctor_id = 3;
+  int32 biz_unit_id = 4;
+  int32 payment_module_id = 5;
+  BookingType booking_type = 6;
+  int64 consultation_start_time = 7;
+  int32 consultation_duration_in_second = 8;
+  ConsultationChannel consultation_channel = 9;
+  int64 booked_at = 10;
+  string symptoms = 11;
+  double consultation_fee = 12;
+}
+
+message ConsultationCancelled {
+  string booking_id = 1;
+  PatientIdentity patient_identity = 2;
+  int32 doctor_id = 3;
+  int32 biz_unit_id = 4;
+  int32 payment_module_id = 5;
+  string cancel_code = 6;
+  int64 cancelled_at = 7;
+}
+
+// ===== Session Events =====
+
+message SessionCreated {
+  string booking_id = 1;
+  PatientIdentity patient_identity = 2;
+  int32 doctor_id = 3;
+  string session_provider = 4;
+  int64 consultation_start_time = 5;
+  int32 consultation_duration_in_second = 6;
+  int64 created_at = 7;
+}
+
+message PatientJoined {
+  string booking_id = 1;
+  PatientIdentity patient_identity = 2;
+  int32 doctor_id = 3;
+  int64 joined_at = 4;
+}
+
+message DoctorJoined {
+  string booking_id = 1;
+  PatientIdentity patient_identity = 2;
+  int32 doctor_id = 3;
+  int64 joined_at = 4;
+}
+
+message AllParticipantJoined {
+  string booking_id = 1;
+  PatientIdentity patient_identity = 2;
+  int32 doctor_id = 3;
+  int64 patient_joined_at = 4;
+  int64 doctor_joined_at = 5;
+}
+
+message PatientDisconnected {
+  string booking_id = 1;
+  PatientIdentity patient_identity = 2;
+  int32 doctor_id = 3;
+  int64 disconnected_at = 4;
+}
+
+message DoctorDisconnected {
+  string booking_id = 1;
+  PatientIdentity patient_identity = 2;
+  int32 doctor_id = 3;
+  int64 disconnected_at = 4;
+}
+
+message SessionTerminated {
+  string booking_id = 1;
+  PatientIdentity patient_identity = 2;
+  int32 doctor_id = 3;
+  TerminationCode termination_code = 4;
+  SessionParticipant terminated_by = 5;
+  int64 terminated_at = 6;
+}
+
+// Session participant who terminated the session
+enum SessionParticipant {
+  SESSION_PARTICIPANT_UNSPECIFIED = 0;
+  PATIENT = 1;
+  DOCTOR = 2;
+  SYSTEM = 3;
+}
+
+// Reason for session termination
+message TerminationCode {
+  oneof code {
+    .google.protobuf.Empty successful_session = 1;
+    .google.protobuf.Empty patient_absent = 2;
+    .google.protobuf.Empty doctor_absent = 3;
+    .google.protobuf.Empty both_parties_absent = 4;
+    TechnicalError technical_error = 5;
+  }
+}
+
+message TechnicalError {
+  string error_message = 1;
+}
+
+// ===== Post-Session Events =====
+
+message ConsultationSummarized {
+  string booking_id = 1;
+  PatientIdentity patient_identity = 2;
+  int32 doctor_id = 3;
+  string doctor_note = 4;
+  PrescriptionInfo prescription_info = 5;
+  int64 summarized_at = 6;
+}
+
+message PrescriptionInfo {
+  string prescription_refcode = 1;
+  repeated Medicine medicine_items = 2;
+  int64 expire_at = 3;
+}
+
+message Medicine {
+  int32 medicine_id = 1;
+  int32 price_plan_id = 2;
+  int32 medicine_amount = 3;
+  string medicine_name_th = 4;
+  string medicine_name_en = 5;
+  string medicine_instruction_en = 6;
+  string medicine_instruction_th = 7;
+  string medicine_image_url = 8;
+  double medicine_unit_price = 9;
+}
+
+message FollowUpRequired {
+  string previous_booking_id = 1;
+  string follow_up_id = 2;
+  PatientIdentity patient_identity = 3;
+  int32 doctor_id = 4;
+  int32 biz_unit_id = 5;
+  int64 consultation_start_time = 6;
+  int32 consultation_duration_in_second = 7;
+  double consultation_fee = 8;
+  ConsultationChannel consultation_channel = 9;
+  string additional_patient_note = 10;  // Optional
+  string internal_note = 11;  // Optional
+  int64 created_at = 12;
+}
+
+message FollowUpRequestExpired {
+  string previous_booking_id = 1;
+  string follow_up_id = 2;
+  int32 doctor_id = 3;
+  PatientIdentity patient_identity = 4;
+  int64 created_at = 5;
+}
+
+message PatientAcceptedFollowUp {
+  string previous_booking_id = 1;
+  string follow_up_id = 2;
+  PatientIdentity patient_identity = 3;
+  int32 doctor_id = 4;
+  int64 consultation_start_time = 5;
+  int32 consultation_duration_in_second = 6;
+  double consultation_fee = 7;
+  string symptoms = 8;
+  ConsultationChannel consultation_channel = 9;
+  int64 created_at = 10;
+}
+
+message FollowUpCancelled {
+  string previous_booking_id = 1;
+  string follow_up_id = 2;
+  PatientIdentity patient_identity = 3;
+  int32 doctor_id = 4;
+  int64 created_at = 5;
+}

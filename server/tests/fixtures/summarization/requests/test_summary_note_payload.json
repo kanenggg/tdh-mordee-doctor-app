@@ -1,0 +1,36 @@
+{
+  "appointmentId": "APT-TEST-SUMMARY",
+  "summaryNote": {
+    "presentIllness": "Patient presents with acute gastroenteritis symptoms including nausea, vomiting, and diarrhea for the past 48 hours. No fever reported. Mild dehydration signs observed.",
+    "chiefComplaint": "Severe nausea and vomiting",
+    "diagnosis": "Acute gastroenteritis, unspecified",
+    "recommendations": "Maintain hydration with oral rehydration solution. Start with clear liquids and gradually introduce bland foods. Rest and avoid solid foods for 24 hours. Seek immediate medical attention if vomiting persists or signs of severe dehydration develop.",
+    "icd10": [
+      {
+        "code": "A09",
+        "description": "Infectious gastroenteritis and colitis, unspecified"
+      },
+      {
+        "code": "K59.1",
+        "description": "Functional diarrhea"
+      }
+    ],
+    "illnessDuration": {
+      "value": 2,
+      "unit": "days"
+    },
+    "noteToStaff": "Patient advised to follow BRAT diet (Bananas, Rice, Applesauce, Toast) once symptoms subside"
+  },
+  "prescription": {
+    "drugAllergyInfo": {
+      "__type": "NoDrugAllergies"
+    },
+    "prescriptionItems": {
+      "__type": "NoPrescription"
+    }
+  },
+  "followUpInfo": {
+    "__type": "NoFollowUp",
+    "noteToStaff": null
+  }
+}

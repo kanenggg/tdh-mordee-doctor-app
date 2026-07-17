@@ -1,0 +1,5 @@
+# Ignore generated files
+# scala/src/generated/
+# rust/src/*.rs
+# python/tdh_protocol/
+# typescript/src/

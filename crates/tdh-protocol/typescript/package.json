@@ -1,0 +1,32 @@
+{
+  "name": "@tdh/protocol",
+  "version": "0.1.0",
+  "description": "TDH protocol buffers - generated TypeScript code",
+  "type": "module",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.js",
+      "types": "./src/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "publish:gcp": "npm publish --registry=https://asia-southeast1-npm.pkg.dev/tdg-dh-truehealth-core-nonprod/tdh-protocol-npm/"
+  },
+  "dependencies": {
+    "@protobuf-ts/grpc": "^2.9.4",
+    "long": "^5.2.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "@types/node": "^20.10.6",
+    "jest": "^29.7.0",
+    "@types/jest": "^29.5.11"
+  },
+  "publishConfig": {
+    "registry": "https://asia-southeast1-npm.pkg.dev/tdg-dh-truehealth-core-nonprod/tdh-protocol-npm/"
+  }
+}

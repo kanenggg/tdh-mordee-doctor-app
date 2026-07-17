@@ -1,0 +1,49 @@
+[package]
+name = "server-bg"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "server_bg"
+path = "src/lib.rs"
+
+[[bin]]
+name = "server-bg"
+path = "src/main.rs"
+
+[dependencies]
+common = { path = "../crates/common" }
+tdh-protocol = { workspace = true }
+
+anyhow = "1"
+async-trait = "0.1"
+axum = { version = "0.8", features = ["macros"] }
+backoff = "0.4"
+base64 = "0.22"
+clap = { version = "4", features = ["derive"] }
+config = "0.14"
+dotenvy = "0.15"
+futures = "0.3"
+google-cloud-pubsub = "0.30"
+jiff = { version = "0.2", features = ["serde"] }
+opentelemetry_sdk = { version = "0.28", features = ["rt-tokio"] }
+reqwest = { version = "0.12", default-features = false, features = [
+  "json",
+  "rustls-tls",
+] }
+rustls = { version = "0.23", default-features = false }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+tokio = { version = "1", features = ["full"] }
+tokio-util = "0.7"
+tower-http = { version = "0.6", features = ["cors"] }
+tracing = "0.1"
+utoipa = { version = "5", features = ["jiff_0_2"] }
+uuid = { version = "1", features = ["v4", "v7", "serde"] }
+sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "postgres", "json", "uuid"] }
+
+[dev-dependencies]
+axum-test = "18"
+testcontainers = "0.24"
+testcontainers-modules = { version = "0.12", features = ["postgres"] }

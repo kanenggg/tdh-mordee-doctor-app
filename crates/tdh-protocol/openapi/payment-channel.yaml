@@ -1,0 +1,462 @@
+openapi: 3.0.3
+info:
+  title: TDH Payment Channel API
+  version: 1.0.0
+  description: Payment channel selection result models
+
+components:
+  schemas:
+    Localized:
+      type: object
+      required:
+        - th-TH
+        - en-US
+      properties:
+        th-TH:
+          type: string
+        en-US:
+          type: string
+
+    InsuranceDiscount:
+      type: object
+      discriminator:
+        propertyName: __type
+      oneOf:
+        - $ref: '#/components/schemas/InsuranceDiscountPercentage'
+        - $ref: '#/components/schemas/InsuranceDiscountAmount'
+
+    InsuranceDiscountPercentage:
+      type: object
+      properties:
+        __type:
+          type: string
+          enum: [Percentage]
+        value:
+          type: integer
+          example: 10
+        amount:
+          type: number
+          format: decimal
+          example: 50.00
+
+    InsuranceDiscountAmount:
+      type: object
+      properties:
+        __type:
+          type: string
+          enum: [Amount]
+        amount:
+          type: number
+          format: decimal
+          example: 100.00
+
+    PaymentChannelResult:
+      type: object
+      discriminator:
+        propertyName: __type
+      oneOf:
+        - $ref: '#/components/schemas/PaymentChannelInsurance'
+        - $ref: '#/components/schemas/PaymentChannelInsuranceV2'
+        - $ref: '#/components/schemas/PaymentChannelInsuranceV3'
+        - $ref: '#/components/schemas/PaymentChannelEmployeeBenefit'
+        - $ref: '#/components/schemas/PaymentChannelEmployeeBenefitV2'
+        - $ref: '#/components/schemas/PaymentChannelCampaign'
+        - $ref: '#/components/schemas/PaymentChannelCard'
+        - $ref: '#/components/schemas/PaymentChannelWallet'
+        - $ref: '#/components/schemas/PaymentChannelPromptPay'
+        - $ref: '#/components/schemas/PaymentChannelTrueMoney'
+
+    PaymentChannelInsurance:
+      type: object
+      properties:
+        __type:
+          type: string
+          enum: [PaymentChannelResult.Insurance]
+        insurerCode:
+          type: string
+        policyId:
+          type: integer
+        coveredAmount:
+          type: number
+          format: decimal
+        claimAmount:
+          type: number
+          format: decimal
+        discount:
+          $ref: '#/components/schemas/InsuranceDiscount'
+        policyPackageType:
+          type: string
+        quotaCoveredAmount:
+          type: number
+          format: decimal
+        channelId:
+          type: integer
+        insuranceNameI18n:
+          $ref: '#/components/schemas/Localized'
+        insuranceTypeNameI18n:
+          $ref: '#/components/schemas/Localized'
+
+    PaymentChannelInsuranceV2:
+      type: object
+      properties:
+        __type:
+          type: string
+          enum: [PaymentChannelResult.InsuranceV2]
+        insurerCode:
+          type: string
+        bindingId:
+          type: integer
+        coveredAmount:
+          type: number
+          format: decimal
+        claimAmount:
+          type: number
+          format: decimal
+        discount:
+          $ref: '#/components/schemas/InsuranceDiscount'
+        policyPackageType:
+          type: string
+        quotaCoveredAmount:
+          type: number
+          format: decimal
+        channelId:
+          type: integer
+        insuranceNameI18n:
+          $ref: '#/components/schemas/Localized'
+        insuranceTypeNameI18n:
+          $ref: '#/components/schemas/Localized'
+
+    PaymentChannelInsuranceV3:
+      type: object
+      properties:
+        __type:
+          type: string
+          enum: [PaymentChannelResult.InsuranceV3]
+        channelId:
+          type: integer
+        coveredAmount:
+          type: number
+          format: decimal
+        claimAmount:
+          type: number
+          format: decimal
+        quotaCoveredAmount:
+          type: number
+          format: decimal
+        discount:
+          $ref: '#/components/schemas/InsuranceDiscount'
+        bindingId:
+          type: integer
+          format: int64
+        privilegeId:
+          type: integer
+        privilegeFlowId:
+          type: integer
+        providerId:
+          type: integer
+        providerName:
+          type: string
+        providerAbbreviation:
+          type: string
+        packageTypeName:
+          type: string
+        claim3rdRef:
+          type: string
+        insuranceNameI18n:
+          $ref: '#/components/schemas/Localized'
+        insuranceTypeNameI18n:
+          $ref: '#/components/schemas/Localized'
+
+    PaymentChannelEmployeeBenefit:
+      type: object
+      properties:
+        __type:
+          type: string
+          enum: [PaymentChannelResult.EmployeeBenefit]
+        companyId:
+          type: integer
+        companyName:
+          type: string
+        benefitId:
+          type: integer
+        benefitCode:
+          type: string
+        privilegeType:
+          type: string
+        coveredAmount:
+          type: number
+          format: decimal
+        claimAmount:
+          type: number
+          format: decimal
+        quotaCoveredAmount:
+          type: number
+          format: decimal
+        channelId:
+          type: integer
+        benefitNameI18n:
+          $ref: '#/components/schemas/Localized'
+
+    PaymentChannelEmployeeBenefitV2:
+      type: object
+      properties:
+        __type:
+          type: string
+          enum: [PaymentChannelResult.EmployeeBenefitV2]
+        companyCode:
+          type: string
+        bindingId:
+          type: integer
+        privilegeType:
+          type: string
+        coveredAmount:
+          type: number
+          format: decimal
+        claimAmount:
+          type: number
+          format: decimal
+        quotaCoveredAmount:
+          type: number
+          format: decimal
+        customData:
+          type: object
+        channelId:
+          type: integer
+        benefitNameI18n:
+          $ref: '#/components/schemas/Localized'
+
+    PaymentChannelCampaign:
+      type: object
+      properties:
+        __type:
+          type: string
+          enum: [PaymentChannelResult.Campaign]
+        campaignId:
+          type: integer
+        coveredAmount:
+          type: number
+          format: decimal
+        claimAmount:
+          type: number
+          format: decimal
+        coupon:
+          type: object
+        channelId:
+          type: integer
+
+    PaymentChannelCard:
+      type: object
+      properties:
+        __type:
+          type: string
+          enum: [PaymentChannelResult.Card]
+        id:
+          type: string
+        amount:
+          type: number
+          format: decimal
+
+    PaymentChannelWallet:
+      type: object
+      properties:
+        __type:
+          type: string
+          enum: [PaymentChannelResult.Wallet]
+        amount:
+          type: number
+          format: decimal
+
+    PaymentChannelPromptPay:
+      type: object
+      properties:
+        __type:
+          type: string
+          enum: [PaymentChannelResult.PromptPay]
+        id:
+          type: string
+        amount:
+          type: number
+          format: decimal
+
+    PaymentChannelTrueMoney:
+      type: object
+      properties:
+        __type:
+          type: string
+          enum: [PaymentChannelResult.TrueMoney]
+        id:
+          type: string
+        amount:
+          type: number
+          format: decimal
+
+    SelectedChannelResult:
+      type: object
+      discriminator:
+        propertyName: __type
+      oneOf:
+        - $ref: '#/components/schemas/CoverageChannel'
+        - $ref: '#/components/schemas/SelfPayChannel'
+        - $ref: '#/components/schemas/CoverageAndSelfPayChannel'
+
+    CoverageChannel:
+      type: object
+      properties:
+        __type:
+          type: string
+          enum: [SelectedChannelResult.CoverageChannel]
+        channel:
+          $ref: '#/components/schemas/PaymentChannelResult'
+
+    SelfPayChannel:
+      type: object
+      properties:
+        __type:
+          type: string
+          enum: [SelectedChannelResult.SelfPayChannel]
+        channel:
+          $ref: '#/components/schemas/PaymentChannelResult'
+
+    CoverageAndSelfPayChannel:
+      type: object
+      properties:
+        __type:
+          type: string
+          enum: [SelectedChannelResult.CoverageAndSelfPayChannel]
+        coverageChannel:
+          $ref: '#/components/schemas/PaymentChannelResult'
+        selfPayChannel:
+          $ref: '#/components/schemas/PaymentChannelResult'
+
+paths:
+  /payment/selected-channel:
+    get:
+      summary: Get selected payment channel result
+      responses:
+        '200':
+          description: Insurance payment example
+          content:
+            application/json:
+              example:
+                __type: SelectedChannelResult.CoverageChannel
+                channel:
+                  __type: PaymentChannelResult.Insurance
+                  insurerCode: "AXA"
+                  policyId: 12345
+                  coveredAmount: 500.00
+                  claimAmount: 500.00
+                  discount:
+                    __type: Percentage
+                    value: 10
+                    amount: 50.00
+                  policyPackageType: "GOLD"
+                  quotaCoveredAmount: 450.00
+                  channelId: 101
+                  insuranceNameI18n:
+                    th-TH: "เอ็กซ์เอ ประกันสุขภาพ"
+                    en-US: "AXA Health Insurance"
+                  insuranceTypeNameI18n:
+                    th-TH: "ประกันสุขภาพส่วนบุคคล"
+                    en-US: "Personal Health Insurance"
+
+    post:
+      summary: Process payment with selected channel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SelectedChannelResult'
+            examples:
+              insurance:
+                summary: Insurance coverage only
+                value:
+                  __type: SelectedChannelResult.CoverageChannel
+                  channel:
+                    __type: PaymentChannelResult.InsuranceV3
+                    channelId: 201
+                    coveredAmount: 800.00
+                    claimAmount: 800.00
+                    quotaCoveredAmount: 800.00
+                    discount:
+                      __type: Amount
+                      amount: 100.00
+                    bindingId: 9876543210
+                    privilegeId: 500
+                    privilegeFlowId: 600
+                    providerId: 10
+                    providerName: "Pacific Cross"
+                    providerAbbreviation: "PC"
+                    packageTypeName: "PLATINUM"
+                    insuranceNameI18n:
+                      th-TH: "แปซิฟิก ครอส"
+                      en-US: "Pacific Cross"
+                    insuranceTypeNameI18n:
+                      th-TH: "ประกันกลุ่ม"
+                      en-US: "Group Insurance"
+              self_pay:
+                summary: Self-pay with credit card
+                value:
+                  __type: SelectedChannelResult.SelfPayChannel
+                  channel:
+                    __type: PaymentChannelResult.Card
+                    id: "card_abc123xyz"
+                    amount: 350.00
+              self_pay_wallet:
+                summary: Self-pay with wallet
+                value:
+                  __type: SelectedChannelResult.SelfPayChannel
+                  channel:
+                    __type: PaymentChannelResult.Wallet
+                    amount: 200.00
+              self_pay_promptpay:
+                summary: Self-pay with PromptPay
+                value:
+                  __type: SelectedChannelResult.SelfPayChannel
+                  channel:
+                    __type: PaymentChannelResult.PromptPay
+                    id: "pp_1234567890"
+                    amount: 450.00
+              mixed:
+                summary: Mixed - Insurance + Self-pay
+                value:
+                  __type: SelectedChannelResult.CoverageAndSelfPayChannel
+                  coverageChannel:
+                    __type: PaymentChannelResult.Insurance
+                    insurerCode: "CIGNA"
+                    policyId: 54321
+                    coveredAmount: 600.00
+                    claimAmount: 600.00
+                    policyPackageType: "SILVER"
+                    quotaCoveredAmount: 600.00
+                    channelId: 301
+                    insuranceNameI18n:
+                      th-TH: "ซิกน่า"
+                      en-US: "Cigna"
+                    insuranceTypeNameI18n:
+                      th-TH: "ประกันสุขภาพ"
+                      en-US: "Health Insurance"
+                  selfPayChannel:
+                    __type: PaymentChannelResult.Card
+                    id: "card_def456uvw"
+                    amount: 150.00
+              employee_benefit:
+                summary: Employee benefit coverage
+                value:
+                  __type: SelectedChannelResult.CoverageChannel
+                  channel:
+                    __type: PaymentChannelResult.EmployeeBenefit
+                    companyId: 1001
+                    companyName: "Acme Corporation"
+                    benefitId: 200
+                    benefitCode: "HEALTH_BASIC"
+                    privilegeType: "OUTPATIENT"
+                    coveredAmount: 750.00
+                    claimAmount: 750.00
+                    quotaCoveredAmount: 750.00
+                    channelId: 401
+                    benefitNameI18n:
+                      th-TH: "สวัสดิการพนักงาน"
+                      en-US: "Employee Benefit"
+      responses:
+        '200':
+          description: Payment processed successfully

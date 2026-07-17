@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package tdh.protocol.notification;
+
+import "google/protobuf/timestamp.proto";
+
+// Notification types
+enum NotificationType {
+  NOTIFICATION_TYPE_UNSPECIFIED = 0;
+  APPOINTMENT = 1;
+  CONSULTATION = 2;
+  SYSTEM = 3;
+  BROADCAST = 4;
+}
+
+// Notification payload sent via Pub/Sub
+message NotificationPayload {
+  NotificationType type = 1;
+  repeated int32 doctor_account_ids = 2;
+  string title = 3;
+  string body = 4;
+  map<string, string> data = 5;
+  string category = 6;
+  int64 scheduled_at = 7;  // Unix timestamp
+}
+
+// Payload for Cloud Tasks execution
+message ScheduledNotificationTask {
+  NotificationPayload notification = 1;
+  int64 original_schedule_time = 2;
+  uint32 chain_count = 3;
+}
+
+// Pub/Sub push message wrapper
+message PubsubPushMessage {
+  PubsubMessage message = 1;
+  string subscription = 2;
+}
+
+// Individual Pub/Sub message
+message PubsubMessage {
+  string data = 1;  // Base64-encoded
+  string message_id = 2;
+  int64 publish_time = 3;
+  map<string, string> attributes = 4;
+}

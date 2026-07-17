@@ -1,0 +1,137 @@
+[package]
+name = "server"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "server"
+path = "src/lib.rs"
+
+[[bin]]
+name = "server"
+path = "src/main.rs"
+
+[[bin]]
+name = "clear_test_notifications"
+path = "src/bin/clear_test_notifications.rs"
+
+[[bin]]
+name = "set_doctor_schedule"
+path = "src/bin/set_doctor_schedule.rs"
+
+[dependencies]
+# Shared models crate
+tdh-protocol = { workspace = true }
+
+# BigDecimal (matches tdh-protocol dependency)
+bigdecimal = "0.4"
+
+# HTTP framework and async runtime
+axum = { version = "0.8", features = ["macros", "multipart"] }
+tokio = { version = "1", features = ["full"] }
+tower = "0.5"
+tower-http = { version = "0.6", features = ["trace", "cors"] }
+futures = "0.3"
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# HTTP client (for auth service calls and Firebase REST)
+reqwest = { version = "0.12", default-features = false, features = [
+  "json",
+  "multipart",
+  "rustls-tls",
+] }
+
+# Firestore (google-cloud-firestore Rust SDK)
+firestore = "0.47"
+# Google auth (ADC for Firestore, Firebase RTDB, FCM, Cloud Tasks)
+gcloud-sdk = { version = "0.28", features = ["google-firestore-v1"] }
+google-cloud-auth = { version = "1", default-features = false, features = [
+  "default-rustls-provider",
+] }
+
+# TLS crypto provider (explicit selection avoids auto-detection failure
+# when both ring and aws-lc-rs are present in the dependency tree)
+rustls = { version = "0.23", default-features = false }
+
+# Configuration
+config = "0.14"
+dotenvy = "0.15"
+
+# Logging / tracing
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+
+# OpenTelemetry
+opentelemetry = "0.28"
+opentelemetry_sdk = { version = "0.28", features = ["rt-tokio"] }
+tracing-opentelemetry = "0.29"
+opentelemetry-otlp = { version = "0.28", features = ["grpc-tonic"] }
+
+# Error handling
+thiserror = "2"
+anyhow = "1"
+
+# OpenAPI / Swagger
+utoipa = { version = "5", features = ["axum_extras", "jiff_0_2", "uuid"] }
+utoipa-swagger-ui = { version = "9", features = ["axum"] }
+
+# Utilities
+uuid = { version = "1", features = ["v4","v7", "serde"] }
+jiff = { version = "0.2", features = ["serde"] }
+jiff-sqlx = { version = "0.1", features = ["postgres"] }
+time = "0.3"
+
+# Keep chrono for protocol type compatibility
+clap = { version = "4", features = ["derive"] }
+async-trait = "0.1"
+regex = "1"
+rand = "0.9"
+bytes = "1"
+
+# Graceful shutdown (CancellationToken for pull subscriber)
+tokio-util = "0.7"
+
+# Encoding
+base64 = "0.22"
+hex = "0.4"
+percent-encoding = "2"
+sha2 = "0.10"
+
+# Paseto v4 local symmetric encryption (default features include std + v4 + paserk)
+pasetors = "0.7"
+
+# Retry with exponential backoff
+backoff = "0.4"
+
+# Google Cloud Pub/Sub publisher
+google-cloud-pubsub = "0.30"
+google-cloud-googleapis = "0.16"
+
+# sqlx
+sqlx = { version = "0.8", features = [
+  "runtime-tokio-rustls",
+  "postgres",
+  "json",
+  "derive",
+  "uuid",
+] }
+
+# Redis cache
+deadpool-redis = "0.23"
+redis = { version = "1", features = ["tokio-comp", "connection-manager", "aio"] }
+
+# Validation
+garde = { version = "0.20", features = ["derive"] }
+struct-patch = "0.12.0"
+
+[dev-dependencies]
+axum-test = "18"
+wiremock = "0.6"
+tokio-test = "0.4"
+toml = "1.0.3"
+testcontainers = "0.23"
+testcontainers-modules = { version = "0.11", features = ["postgres", "redis"] }
+pretty_assertions = "1"

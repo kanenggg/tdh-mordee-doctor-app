@@ -1,0 +1,15 @@
+{
+  "appointmentId": "APT-005",
+  "prescription": {
+    "drugAllergyInfo": {
+      "__type": "NoDrugAllergies"
+    },
+    "prescriptionItems": {
+      "__type": "NoPrescription"
+    }
+  },
+  "followUpInfo": {
+    "__type": "NoFollowUp",
+    "noteToStaff": null
+  }
+}

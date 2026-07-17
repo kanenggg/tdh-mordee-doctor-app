@@ -1,0 +1,13 @@
+pub mod appointment;
+pub mod backoffice;
+pub mod consultation;
+pub mod ehr;
+pub mod ekyc;
+pub mod notification;
+pub mod onboarding;
+pub mod patient;
+pub mod profile;
+pub mod profile_event_outbox;
+pub mod ranking;
+pub mod timeslot;
+pub mod webhook;

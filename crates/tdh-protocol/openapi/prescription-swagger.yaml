@@ -1,0 +1,229 @@
+---
+openapi: 3.0.3
+info:
+  title: prescription-api API
+  version: 1.0.0-SNAPSHOT
+paths:
+  /prescription/create:
+    post:
+      tags:
+      - Prescription Resource
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PrescriptionRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json: {}
+  /prescription/{booking_id}:
+    get:
+      tags:
+      - Prescription Resource
+      parameters:
+      - name: booking_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Prescription found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PrescriptionResponse"
+components:
+  schemas:
+    OffsetDateTime:
+      format: date-time
+      type: string
+      example: 2022-03-10T12:15:50-04:00
+    PrescriptionItemRequest:
+      type: object
+      properties:
+        medicineId:
+          format: int32
+          type: integer
+        pricePlanId:
+          format: int32
+          type: integer
+        dosage:
+          format: int32
+          type: integer
+        dosageId:
+          format: int32
+          type: integer
+        routeId:
+          format: int32
+          type: integer
+        frequencyId:
+          format: int32
+          type: integer
+        duration:
+          format: int32
+          type: integer
+        durationId:
+          format: int32
+          type: integer
+        indicationId:
+          format: int32
+          type: integer
+        caution:
+          type: string
+          nullable: true
+        remark:
+          type: string
+          nullable: true
+        patientDetail:
+          type: string
+          nullable: true
+        unitAmount:
+          format: int32
+          type: integer
+        unitCost:
+          format: double
+          type: number
+        totalAmount:
+          format: double
+          type: number
+    PrescriptionItemResponse:
+      type: object
+      properties:
+        prescriptionItemId:
+          format: int32
+          type: integer
+        medicineId:
+          format: int32
+          type: integer
+        dosage:
+          format: int32
+          type: integer
+        dosageId:
+          format: int32
+          type: integer
+        routeId:
+          format: int32
+          type: integer
+        frequencyId:
+          format: int32
+          type: integer
+        duration:
+          format: int32
+          type: integer
+        durationId:
+          format: int32
+          type: integer
+        indicationId:
+          format: int32
+          type: integer
+        caution:
+          type: string
+          nullable: true
+        remark:
+          type: string
+          nullable: true
+        patientDetail:
+          type: string
+          nullable: true
+        unitAmount:
+          format: int32
+          type: integer
+        unitCost:
+          format: double
+          type: number
+        totalAmount:
+          format: double
+          type: number
+    PrescriptionRequest:
+      required:
+      - bookingId
+      type: object
+      properties:
+        bookingId:
+          type: string
+        bizUnitId:
+          format: int32
+          type: integer
+        bizCenterId:
+          format: int32
+          type: integer
+        doctorId:
+          format: int32
+          type: integer
+        patientId:
+          format: int32
+          type: integer
+        prescriptionNo:
+          type: string
+          nullable: true
+        prescriptionExpiredAt:
+          format: int64
+          type: integer
+          nullable: true
+        acknowlegeAllergy:
+          type: boolean
+          nullable: true
+        allergies:
+          type: array
+          items:
+            format: int32
+            type: integer
+          nullable: true
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/PrescriptionItemRequest"
+          nullable: true
+    PrescriptionResponse:
+      required:
+      - __type
+      - bookingId
+      - items
+      type: object
+      properties:
+        __type:
+          type: string
+        prescriptionId:
+          format: int32
+          type: integer
+        bookingId:
+          type: string
+        bizUnitId:
+          format: int32
+          type: integer
+        bizCenterId:
+          format: int32
+          type: integer
+        doctorId:
+          format: int32
+          type: integer
+        patientId:
+          format: int32
+          type: integer
+        prescriptionNo:
+          type: string
+          nullable: true
+        prescriptionExpiredAt:
+          type: string
+          allOf:
+          - $ref: "#/components/schemas/OffsetDateTime"
+          nullable: true
+        acknowlegeAllergy:
+          type: boolean
+        allergies:
+          type: array
+          items:
+            format: int32
+            type: integer
+          nullable: true
+        totalAmount:
+          format: double
+          type: number
+          nullable: true
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/PrescriptionItemResponse"

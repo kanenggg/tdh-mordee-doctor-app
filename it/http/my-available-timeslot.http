@@ -1,0 +1,32 @@
+### Get my available timeslots - happy path
+
+GET {{host}}/timeslot/v1/me/available-timeslots?date=2026-04-02T00:00:00%2B07:00 HTTP/1.1
+Accept: application/json
+Tdh-Sec-Iam-User-Identity: {{doctorIdentity}}
+
+
+### Get my available timeslots - different offset (UTC+5:30)
+
+GET {{host}}/timeslot/v1/my-available?date=2026-04-02T00:00:00%2B05:30 HTTP/1.1
+Accept: application/json
+Tdh-Sec-Iam-User-Identity: {{doctorIdentity}}
+
+
+### Get my available timeslots - invalid date format (should return 400)
+
+GET {{host}}/timeslot/v1/my-available?date=2026-04-02 HTTP/1.1
+Accept: application/json
+Tdh-Sec-Iam-User-Identity: {{doctorIdentity}}
+
+
+### Get my available timeslots - missing identity header (should return 401)
+
+GET {{host}}/timeslot/v1/my-available?date=2026-04-02T00:00:00%2B07:00 HTTP/1.1
+Accept: application/json
+
+
+### Get my available timeslots - non-doctor account (should return 403)
+
+GET {{host}}/timeslot/v1/my-available?date=2026-04-02T00:00:00%2B07:00 HTTP/1.1
+Accept: application/json
+Tdh-Sec-Iam-User-Identity: {{patientIdentity}}

@@ -1,0 +1,7 @@
+### Get appointment
+
+@_bookingId = 20260527070331774
+
+GET {{host}}/appointment/v1/{{_bookingId}} HTTP/1.1
+Accept: application/json
+Tdh-Sec-Iam-User-Identity: {{doctorIdentity}}

@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package tdh.protocol.common;
+
+// Localized - generic wrapper for internationalized strings
+message LocalizedString {
+  string th = 1;  // Thai content
+  string en = 2;  // English content
+}
+
+// Localized<T> equivalent for generic types
+message LocalizedBool {
+  bool th = 1;
+  bool en = 2;
+}
+
+message LocalizedInt32 {
+  int32 th = 1;
+  int32 en = 2;
+}
