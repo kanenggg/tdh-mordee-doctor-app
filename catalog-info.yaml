@@ -29,7 +29,7 @@ metadata:
 spec:
   type: service
   lifecycle: production
-  owner: P.bank
+  owner: user:default/p-bank
   system: doctor
   providesApis:
     - tdh-mordee-doctor-api
@@ -71,7 +71,7 @@ metadata:
 spec:
   type: service
   lifecycle: production
-  owner: P.bank
+  owner: user:default/p-bank
   system: doctor
   dependsOn:
     - resource:doctor-firestore
@@ -93,7 +93,7 @@ metadata:
 spec:
   type: openapi
   lifecycle: production
-  owner: P.bank
+  owner: user:default/p-bank
   system: doctor
   definition: |
     openapi: 3.0.3
@@ -113,7 +113,7 @@ metadata:
   description: PostgreSQL data store for doctor domain data.
 spec:
   type: database
-  owner: P.bank
+  owner: user:default/p-bank
   system: doctor
 
 ---
@@ -124,7 +124,7 @@ metadata:
   description: Redis cache used by the doctor services.
 spec:
   type: cache
-  owner: P.bank
+  owner: user:default/p-bank
   system: doctor
 
 ---
@@ -135,7 +135,7 @@ metadata:
   description: Firestore document store used by the doctor services.
 spec:
   type: database
-  owner: P.bank
+  owner: user:default/p-bank
   system: doctor
 
 ---
@@ -146,7 +146,7 @@ metadata:
   description: Firebase Realtime Database used for real-time doctor workflows.
 spec:
   type: database
-  owner: P.bank
+  owner: user:default/p-bank
   system: doctor
 
 ---
@@ -157,7 +157,7 @@ metadata:
   description: GCP Pub/Sub resources used for doctor background events.
 spec:
   type: message-broker
-  owner: P.bank
+  owner: user:default/p-bank
   system: doctor
 
 ---
@@ -168,5 +168,5 @@ metadata:
   description: GCP Cloud Tasks queues used for scheduled background work.
 spec:
   type: queue
-  owner: P.bank
+  owner: user:default/p-bank
   system: doctor
