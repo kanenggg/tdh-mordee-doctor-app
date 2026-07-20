@@ -19,6 +19,10 @@ path = "src/bin/clear_test_notifications.rs"
 name = "set_doctor_schedule"
 path = "src/bin/set_doctor_schedule.rs"
 
+[[bin]]
+name = "export_openapi"
+path = "src/bin/export_openapi.rs"
+
 [dependencies]
 # Shared models crate
 tdh-protocol = { workspace = true }

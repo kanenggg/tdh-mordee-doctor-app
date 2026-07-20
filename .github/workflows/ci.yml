@@ -5,8 +5,16 @@ on:
     branches: [main]
     paths:
       - '**/catalog-info.yaml'
-      - 'crates/**/openapi/**'
+      - 'server/src/**/*.rs'
+      - 'crates/tdh-protocol/**'
   workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: backstage-catalog-sync-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   sync-catalog:
@@ -14,6 +22,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -22,6 +32,48 @@ jobs:
 
       - name: Install dependencies
         run: pip install pyyaml
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust build
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: . -> target
+
+      - name: Generate OpenAPI specification
+        run: cargo run --locked -p server --bin export_openapi -- server/openapi.json
+
+      - name: Validate generated OpenAPI specification
+        run: |
+          python3 - <<'EOF'
+          import json
+
+          with open('server/openapi.json', encoding='utf-8') as file:
+              spec = json.load(file)
+
+          if not spec.get('openapi'):
+              raise SystemExit('❌ generated spec is missing openapi version')
+          if not spec.get('info', {}).get('title'):
+              raise SystemExit('❌ generated spec is missing info.title')
+          if not spec.get('paths'):
+              raise SystemExit('❌ generated spec has no paths')
+
+          print(f"✅ valid OpenAPI spec with {len(spec['paths'])} paths")
+          EOF
+
+      - name: Commit updated OpenAPI specification
+        run: |
+          if [ -z "$(git status --porcelain -- server/openapi.json)" ]; then
+            echo "✅ OpenAPI specification is already up to date"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add server/openapi.json
+          git commit -m "docs(openapi): update generated specification [skip ci]"
+          git push
 
       - name: Find all catalog-info.yaml files
         id: find
