@@ -24,17 +24,16 @@ jobs:
     runs-on: [self-hosted, macOS, ARM64]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: recursive
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Install dependencies
-        run: pip install pyyaml
+      - name: Setup Python dependencies
+        run: |
+          python3 --version
+          python3 -m venv .venv
+          .venv/bin/python -m pip install pyyaml
+          echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
