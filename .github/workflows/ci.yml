@@ -5,8 +5,11 @@ on:
     branches: [main]
     paths:
       - '**/catalog-info.yaml'
+      - 'server/Cargo.toml'
       - 'server/src/**/*.rs'
       - 'crates/tdh-protocol/**'
+      - '.github/scripts/parse_catalog.py'
+      - '.github/workflows/ci.yml'
   workflow_dispatch: {}
 
 permissions:
