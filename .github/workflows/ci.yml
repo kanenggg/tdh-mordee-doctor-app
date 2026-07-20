@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   sync-catalog:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, macOS, ARM64]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -134,12 +134,20 @@ jobs:
           FAILED=0
           while IFS= read -r ref; do
             echo "🔄 Refreshing: $ref"
-            HTTP_CODE=$(curl -s -o /tmp/resp.json -w "%{http_code}" \
+            if HTTP_CODE=$(curl -sS -o /tmp/resp.json -w "%{http_code}" \
+              --connect-timeout 10 --max-time 30 \
               --retry 3 --retry-delay 2 \
               -X POST "${{ secrets.BACKSTAGE_URL }}/api/catalog/refresh" \
               -H "Content-Type: application/json" \
               -H "Authorization: Bearer ${{ secrets.BACKSTAGE_TOKEN }}" \
-              -d "{\"entityRef\": \"$ref\"}")
+              -d "{\"entityRef\": \"$ref\"}"); then
+              :
+            else
+              CURL_EXIT=$?
+              echo "  ❌ Cannot connect to Backstage (curl exit $CURL_EXIT)"
+              FAILED=1
+              continue
+            fi
 
             if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
               echo "  ✅ OK ($HTTP_CODE)"
