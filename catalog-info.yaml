@@ -40,44 +40,44 @@ spec:
     - resource:doctor-firebase-rtdb
 
 ---
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: tdh-mordee-doctor-bg
-  title: TDH MorDee Doctor Background Service
-  description: >-
-    Background service for doctor calendar events and scheduled doctor
-    notifications.
-  annotations:
-    github.com/project-slug: kanenggg/tdh-mordee-doctor-app
-    # TODO: Uncomment when the deployment namespace and workload name are known.
-    # backstage.io/kubernetes-id: <kubernetes-workload-name>
-    # backstage.io/kubernetes-namespace: <kubernetes-namespace>
-    # TODO: Uncomment when the Argo CD application name is known.
-    # argocd/app-name: <argocd-application-name>
-    # TODO: Uncomment when the SonarQube project key is known.
-    # sonarqube.org/project-key: <sonarqube-project-key>
-    # TODO: Uncomment after TechDocs and mkdocs.yml are configured in this repo.
-    # backstage.io/techdocs-ref: dir:.
-  tags:
-    - rust
-    - axum
-    - gcp-pubsub
-    - cloud-tasks
-  links:
-    - url: https://github.com/kanenggg/tdh-mordee-doctor-app/blob/main/docs/CODEMAPS/workers.md
-      title: Worker Documentation
-      icon: docs
-spec:
-  type: service
-  lifecycle: production
-  owner: user:default/p-bank
-  system: doctor
-  dependsOn:
-    - resource:doctor-firestore
-    - resource:doctor-firebase-rtdb
-    - resource:doctor-pubsub
-    - resource:doctor-cloud-tasks
+# apiVersion: backstage.io/v1alpha1
+# kind: Component
+# metadata:
+#   name: tdh-mordee-doctor-bg
+#   title: TDH MorDee Doctor Background Service
+#   description: >-
+#     Background service for doctor calendar events and scheduled doctor
+#     notifications.
+#   annotations:
+#     github.com/project-slug: kanenggg/tdh-mordee-doctor-app
+#     # TODO: Uncomment when the deployment namespace and workload name are known.
+#     # backstage.io/kubernetes-id: <kubernetes-workload-name>
+#     # backstage.io/kubernetes-namespace: <kubernetes-namespace>
+#     # TODO: Uncomment when the Argo CD application name is known.
+#     # argocd/app-name: <argocd-application-name>
+#     # TODO: Uncomment when the SonarQube project key is known.
+#     # sonarqube.org/project-key: <sonarqube-project-key>
+#     # TODO: Uncomment after TechDocs and mkdocs.yml are configured in this repo.
+#     # backstage.io/techdocs-ref: dir:.
+#   tags:
+#     - rust
+#     - axum
+#     - gcp-pubsub
+#     - cloud-tasks
+#   links:
+#     - url: https://github.com/kanenggg/tdh-mordee-doctor-app/blob/main/docs/CODEMAPS/workers.md
+#       title: Worker Documentation
+#       icon: docs
+# spec:
+#   type: service
+#   lifecycle: production
+#   owner: user:default/p-bank
+#   system: doctor
+#   dependsOn:
+#     - resource:doctor-firestore
+#     - resource:doctor-firebase-rtdb
+#     - resource:doctor-pubsub
+#     - resource:doctor-cloud-tasks
 
 ---
 apiVersion: backstage.io/v1alpha1
