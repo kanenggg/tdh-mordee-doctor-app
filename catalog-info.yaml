@@ -84,7 +84,7 @@ apiVersion: backstage.io/v1alpha1
 kind: API
 metadata:
   name: tdh-mordee-doctor-api
-  title: TDH MorDee Doctor API kan
+  title: TDH MorDee Doctor API
   description: HTTP API exposed by the TDH MorDee Doctor service.
   tags:
     - rest
