@@ -72,7 +72,6 @@ spec:
   type: service
   lifecycle: production
   owner: user:default/p-bank
-  system: doctor
   dependsOn:
     - resource:doctor-firestore
     - resource:doctor-firebase-rtdb
@@ -178,4 +177,3 @@ metadata:
     - doctor
 spec:
   owner: user:default/p-bank
-  
