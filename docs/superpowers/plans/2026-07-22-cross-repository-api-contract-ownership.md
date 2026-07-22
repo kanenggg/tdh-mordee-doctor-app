@@ -35,7 +35,7 @@
 Run from `/Users/thanawat/Documents/GitHub`:
 
 ```bash
-ruby -e 'require "yaml"; files=%w[tdh-biz-doctor-apmv2/catalog-info.yaml tdh-mordee-doctor-app/catalog-info.yaml]; docs=files.flat_map { |f| YAML.load_stream(File.read(f), aliases: true).compact }; owners=docs.select { |d| d["kind"] == "API" && d.dig("metadata", "name") == "doctor-profile-events" }; abort "expected one DoctorApp owner" unless owners.length == 1 && owners[0].dig("spec", "definition", "$text") == "./specs/provides/doctor-profile-approved.asyncapi.yaml"'
+ruby -e 'require "yaml"; files=%w[tdh-biz-doctor-apmv2/catalog-info.yaml tdh-mordee-doctor-app/catalog-info.yaml]; docs=files.flat_map { |f| YAML.load_stream(File.read(f)).compact }; owners=docs.select { |d| d["kind"] == "API" && d.dig("metadata", "name") == "doctor-profile-events" }; abort "expected one DoctorApp owner" unless owners.length == 1 && owners[0].dig("spec", "definition", "$text") == "./specs/provides/doctor-profile-approved.asyncapi.yaml"'
 ```
 
 Expected: non-zero exit with `expected one DoctorApp owner`, because the only current entity is defined by APMv2.
@@ -91,7 +91,7 @@ from `tdh-biz-doctor-apmv2/catalog-info.yaml`. Keep
 - [ ] **Step 4: Run the ownership assertion and schema parse**
 
 ```bash
-ruby -e 'require "yaml"; files=%w[tdh-biz-doctor-apmv2/catalog-info.yaml tdh-mordee-doctor-app/catalog-info.yaml]; docs=files.flat_map { |f| YAML.load_stream(File.read(f), aliases: true).compact }; owners=docs.select { |d| d["kind"] == "API" && d.dig("metadata", "name") == "doctor-profile-events" }; abort "expected one DoctorApp owner" unless owners.length == 1 && owners[0].dig("spec", "definition", "$text") == "./specs/provides/doctor-profile-approved.asyncapi.yaml"; YAML.safe_load(File.read("tdh-mordee-doctor-app/specs/provides/doctor-profile-approved.asyncapi.yaml"), aliases: true); puts "ownership and AsyncAPI YAML valid"'
+ruby -e 'require "yaml"; files=%w[tdh-biz-doctor-apmv2/catalog-info.yaml tdh-mordee-doctor-app/catalog-info.yaml]; docs=files.flat_map { |f| YAML.load_stream(File.read(f)).compact }; owners=docs.select { |d| d["kind"] == "API" && d.dig("metadata", "name") == "doctor-profile-events" }; abort "expected one DoctorApp owner" unless owners.length == 1 && owners[0].dig("spec", "definition", "$text") == "./specs/provides/doctor-profile-approved.asyncapi.yaml"; YAML.load_file("tdh-mordee-doctor-app/specs/provides/doctor-profile-approved.asyncapi.yaml"); puts "ownership and AsyncAPI YAML valid"'
 ```
 
 Expected: exit 0 and `ownership and AsyncAPI YAML valid`.
@@ -119,7 +119,7 @@ Expected: one successful commit per repository.
 - [ ] **Step 1: Run the pre-change relation assertion and verify it fails**
 
 ```bash
-ruby -e 'require "yaml"; docs=YAML.load_stream(File.read("tdh-mordee-doctor-app/catalog-info.yaml"), aliases: true).compact; app=docs.find { |d| d["kind"] == "Component" && d.dig("metadata", "name") == "tdh-mordee-doctor-app" }; bg=docs.find { |d| d["kind"] == "Component" && d.dig("metadata", "name") == "tdh-mordee-doctor-bg" }; abort "missing API relations" unless app.dig("spec", "consumesApis") == %w[consultation-rs-api biz-apm-published-events] && bg.dig("spec", "consumesApis") == ["biz-apm-published-events"]'
+ruby -e 'require "yaml"; docs=YAML.load_stream(File.read("tdh-mordee-doctor-app/catalog-info.yaml")).compact; app=docs.find { |d| d["kind"] == "Component" && d.dig("metadata", "name") == "tdh-mordee-doctor-app" }; bg=docs.find { |d| d["kind"] == "Component" && d.dig("metadata", "name") == "tdh-mordee-doctor-bg" }; abort "missing API relations" unless app.dig("spec", "consumesApis") == %w[consultation-rs-api biz-apm-published-events] && bg.dig("spec", "consumesApis") == ["biz-apm-published-events"]'
 ```
 
 Expected: non-zero exit with `missing API relations`.
@@ -188,7 +188,7 @@ Keep the existing required-field description unchanged.
 - [ ] **Step 3: Run final structural verification**
 
 ```bash
-ruby -e 'require "yaml"; roots={"tdh-biz-doctor-apmv2"=>"catalog-info.yaml", "tdh-mordee-doctor-app"=>"catalog-info.yaml"}; docs=roots.flat_map { |root,file| YAML.load_stream(File.read(File.join(root,file)), aliases: true).compact.map { |d| [root,d] } }; apis=docs.select { |_,d| d["kind"] == "API" }.map { |root,d| [d.dig("metadata","name"),root,d.dig("spec","definition","$text")] }; abort "duplicate API names" unless apis.map(&:first).uniq.length == apis.length; apis.each { |name,root,ref| next unless ref&.start_with?("./"); path=File.expand_path(ref, root); abort "missing definition for #{name}: #{path}" unless File.file?(path); YAML.safe_load(File.read(path), aliases: true) }; puts "catalog APIs and local definitions valid"'
+ruby -e 'require "yaml"; roots={"tdh-biz-doctor-apmv2"=>"catalog-info.yaml", "tdh-mordee-doctor-app"=>"catalog-info.yaml"}; docs=roots.flat_map { |root,file| YAML.load_stream(File.read(File.join(root,file))).compact.map { |d| [root,d] } }; apis=docs.select { |_,d| d["kind"] == "API" }.map { |root,d| [d.dig("metadata","name"),root,d.dig("spec","definition","$text")] }; abort "duplicate API names" unless apis.map(&:first).uniq.length == apis.length; apis.each { |name,root,ref| next unless ref&.start_with?("./"); path=File.expand_path(ref, root); abort "missing definition for #{name}: #{path}" unless File.file?(path); YAML.load_file(path) }; puts "catalog APIs and local definitions valid"'
 git -C tdh-mordee-doctor-app diff --check
 git -C tdh-biz-doctor-apmv2 diff --check
 ```
@@ -198,7 +198,7 @@ Expected: `catalog APIs and local definitions valid`, followed by both Git check
 - [ ] **Step 4: Verify relations and removed-path cleanup**
 
 ```bash
-ruby -e 'require "yaml"; doctor=YAML.load_stream(File.read("tdh-mordee-doctor-app/catalog-info.yaml"), aliases: true).compact; apm=YAML.load_stream(File.read("tdh-biz-doctor-apmv2/catalog-info.yaml"), aliases: true).compact; app=doctor.find { |d| d.dig("metadata","name") == "tdh-mordee-doctor-app" }; bg=doctor.find { |d| d.dig("metadata","name") == "tdh-mordee-doctor-bg" }; apmbg=apm.find { |d| d.dig("metadata","name") == "consultation-bg-rs" }; abort "DoctorApp relations wrong" unless app.dig("spec","providesApis").include?("doctor-profile-events") && app.dig("spec","consumesApis") == %w[consultation-rs-api biz-apm-published-events]; abort "DoctorApp BG relations wrong" unless bg.dig("spec","providesApis") == ["doctor-profile-events"] && bg.dig("spec","consumesApis") == ["biz-apm-published-events"]; abort "APM relation wrong" unless apmbg.dig("spec","consumesApis") == ["doctor-profile-events"]; puts "cross-repository relations valid"'
+ruby -e 'require "yaml"; doctor=YAML.load_stream(File.read("tdh-mordee-doctor-app/catalog-info.yaml")).compact; apm=YAML.load_stream(File.read("tdh-biz-doctor-apmv2/catalog-info.yaml")).compact; app=doctor.find { |d| d.dig("metadata","name") == "tdh-mordee-doctor-app" }; bg=doctor.find { |d| d.dig("metadata","name") == "tdh-mordee-doctor-bg" }; apmbg=apm.find { |d| d.dig("metadata","name") == "consultation-bg-rs" }; abort "DoctorApp relations wrong" unless app.dig("spec","providesApis").include?("doctor-profile-events") && app.dig("spec","consumesApis") == %w[consultation-rs-api biz-apm-published-events]; abort "DoctorApp BG relations wrong" unless bg.dig("spec","providesApis") == ["doctor-profile-events"] && bg.dig("spec","consumesApis") == ["biz-apm-published-events"]; abort "APM relation wrong" unless apmbg.dig("spec","consumesApis") == ["doctor-profile-events"]; puts "cross-repository relations valid"'
 test ! -e tdh-biz-doctor-apmv2/specs/depends-on/doctor-profile-approved.asyncapi.yaml
 ! rg -n 'specs/depends-on/doctor-profile-approved\.asyncapi\.yaml' tdh-biz-doctor-apmv2/docs/plans/DOCTOR_PROJECTION_SYNC_ROLLOUT.md
 ```
@@ -213,4 +213,3 @@ git -C tdh-biz-doctor-apmv2 commit -m "docs: point projection rollout to DoctorA
 ```
 
 Expected: successful commit and clean worktrees in both repositories.
-
