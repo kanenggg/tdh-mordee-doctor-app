@@ -1,0 +1,8 @@
+version: 1
+openapi:
+  generate:
+    command: [cargo, run, --locked, -p, server, --bin, export_openapi, --, server/openapi.json]
+  artifacts:
+    - path: server/openapi.json
+      format: json
+      required_key: openapi

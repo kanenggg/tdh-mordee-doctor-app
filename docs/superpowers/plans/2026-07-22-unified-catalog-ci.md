@@ -52,7 +52,7 @@ tests.
 - [ ] **Step 2: Run the focused test and verify RED**
 
 ```bash
-python3 -m unittest tdh-mordee-doctor-app/.github/scripts/test_catalog_ci.py -v
+python3 tdh-mordee-doctor-app/.github/scripts/test_catalog_ci.py -v
 ```
 
 Expected: FAIL because the current parser does not accept `repository_root`
@@ -83,7 +83,7 @@ JSON output keys.
 Copy the resulting parser byte-for-byte to APMv2, then run:
 
 ```bash
-python3 -m unittest tdh-mordee-doctor-app/.github/scripts/test_catalog_ci.py -v
+python3 tdh-mordee-doctor-app/.github/scripts/test_catalog_ci.py -v
 cmp tdh-mordee-doctor-app/.github/scripts/parse_catalog.py tdh-biz-doctor-apmv2/.github/scripts/parse_catalog.py
 ```
 
@@ -126,7 +126,7 @@ Cargo from unit tests.
 - [ ] **Step 2: Run and verify RED**
 
 ```bash
-python3 -m unittest tdh-mordee-doctor-app/.github/scripts/test_catalog_ci.py -v
+python3 tdh-mordee-doctor-app/.github/scripts/test_catalog_ci.py -v
 ```
 
 Expected: import failure for missing `catalog_ci.py`.
@@ -198,8 +198,8 @@ openapi:
 Copy `catalog_ci.py` and `test_catalog_ci.py` byte-for-byte to APMv2. Run:
 
 ```bash
-python3 -m unittest tdh-mordee-doctor-app/.github/scripts/test_catalog_ci.py -v
-python3 -m unittest tdh-biz-doctor-apmv2/.github/scripts/test_catalog_ci.py -v
+python3 tdh-mordee-doctor-app/.github/scripts/test_catalog_ci.py -v
+python3 tdh-biz-doctor-apmv2/.github/scripts/test_catalog_ci.py -v
 cmp tdh-mordee-doctor-app/.github/scripts/catalog_ci.py tdh-biz-doctor-apmv2/.github/scripts/catalog_ci.py
 cmp tdh-mordee-doctor-app/.github/scripts/test_catalog_ci.py tdh-biz-doctor-apmv2/.github/scripts/test_catalog_ci.py
 ```
@@ -243,7 +243,7 @@ concurrency:
 Use `actions/checkout@v6` with `submodules: recursive`, Python venv + PyYAML,
 `dtolnay/rust-toolchain@stable`, and `Swatinem/rust-cache@v2`. Steps, in order:
 
-1. `python -m unittest .github/scripts/test_catalog_ci.py -v`
+1. `python .github/scripts/test_catalog_ci.py -v`
 2. `python .github/scripts/catalog_ci.py generate-openapi`
 3. `python .github/scripts/catalog_ci.py validate-openapi`
 4. If `artifacts-changed` succeeds, add every newline-delimited
