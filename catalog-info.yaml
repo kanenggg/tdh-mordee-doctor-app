@@ -33,6 +33,7 @@ spec:
   system: doctor
   providesApis:
     - tdh-mordee-doctor-api
+    - doctor-profile-events
   dependsOn:
     - resource:doctor-postgresql
     - resource:doctor-redis
@@ -72,6 +73,8 @@ spec:
   type: service
   lifecycle: production
   owner: user:default/p-bank
+  providesApis:
+    - doctor-profile-events
   dependsOn:
     - resource:doctor-firestore
     - resource:doctor-firebase-rtdb
@@ -96,6 +99,25 @@ spec:
   system: doctor
   definition:
     $text: ./server/openapi.json
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: doctor-profile-events
+  title: Doctor Profile Events
+  description: Doctor profile events published for downstream projections.
+  tags:
+    - asyncapi
+    - gcp-pubsub
+    - doctor-profile
+spec:
+  type: asyncapi
+  lifecycle: production
+  owner: user:default/p-bank
+  system: doctor
+  definition:
+    $text: ./specs/provides/doctor-profile-approved.asyncapi.yaml
 
 ---
 apiVersion: backstage.io/v1alpha1
