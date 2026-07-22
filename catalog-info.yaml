@@ -34,6 +34,9 @@ spec:
   providesApis:
     - tdh-mordee-doctor-api
     - doctor-profile-events
+  consumesApis:
+    - consultation-rs-api
+    - biz-apm-published-events
   dependsOn:
     - resource:doctor-postgresql
     - resource:doctor-redis
@@ -75,6 +78,8 @@ spec:
   owner: user:default/p-bank
   providesApis:
     - doctor-profile-events
+  consumesApis:
+    - biz-apm-published-events
   dependsOn:
     - resource:doctor-firestore
     - resource:doctor-firebase-rtdb
