@@ -105,4 +105,3 @@ Validation will:
 
 No runtime Rust, Pub/Sub topic, event payload, deployment, or rollout behavior
 changes as part of this work.
-
