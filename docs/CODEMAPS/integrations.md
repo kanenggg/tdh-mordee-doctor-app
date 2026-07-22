@@ -28,6 +28,10 @@ graph TD
     D --> D2[Scheduled Jobs]
 ```
 
+## Cross-system integration guides
+
+- [DoctorApp–APMv2 integration](../contracts/doctorapp-apmv2-integration.md) — canonical ownership, API, and event-contract overview.
+
 ## GCP Services Integration
 
 ### 1. Google Cloud Firestore
