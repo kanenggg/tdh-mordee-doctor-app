@@ -11,6 +11,7 @@
 ## Global Constraints
 
 - Keep one authoritative integration document in DoctorApp; do not duplicate its full content in APMv2.
+- Treat document bodies embedded in this implementation plan as non-authoritative creation-time snapshots; maintain only the delivered files after execution.
 - Document only active runtime contracts: `doctor-profile-events`, `consultation-rs-api`, and `biz-apm-published-events`.
 - Do not present experimental Consultation Event V2 artifacts as active dependencies.
 - Do not change catalogs, AsyncAPI, OpenAPI, runtime, deployment, or rollout behavior.
@@ -43,6 +44,10 @@ Expected: non-zero exit because the canonical guide does not exist.
 
 Create `tdh-mordee-doctor-app/docs/contracts/doctorapp-apmv2-integration.md`
 with this content:
+
+> **Creation-time snapshot:** The code block below records the initial file
+> creation instructions. After execution it is non-authoritative and must not
+> be maintained; the delivered file is the only canonical integration guide.
 
 ```markdown
 # DoctorApp–APMv2 integration
@@ -162,6 +167,10 @@ Expected: non-zero exit because the consumer reference does not exist.
 
 Create `tdh-biz-doctor-apmv2/docs/DOCTORAPP_INTEGRATION.md` with this
 content:
+
+> **Creation-time snapshot:** The code block below records the initial file
+> creation instructions. After execution it is non-authoritative and must not
+> be maintained; maintain only the delivered APMv2 consumer reference.
 
 ```markdown
 # DoctorApp integration
